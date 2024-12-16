@@ -1,0 +1,45 @@
+
+.map-button {
+    display: inline;
+    margin-bottom: 12px;
+    margin-left: 5px;
+    margin-top: 10px;
+    padding: 10px 16px;
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.map-buttons {
+    position: absolute;
+    height: 100px;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+}
+
+.map-button:hover {
+    background-color: #357ab8;
+}
+
+.map-container{
+    left: 16px;
+    width: 500%;
+    height: 700px;
+    position: relative;
+}
+
+.google-map{
+    width: 100%;
+    height: 700px;
+}
+.location-input {
+    display: inline;
+    margin-top: 10px;
+    height: 40%;
+    padding: 8px 16px;
+}
