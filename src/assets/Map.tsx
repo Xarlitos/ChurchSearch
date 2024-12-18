@@ -1,12 +1,7 @@
-import React from "react";
+import React, {useState} from "react";
 import {GoogleMap, useLoadScript, Marker} from "@react-google-maps/api"
 import "./Map.css"
 import googleApiKey from "../../GoogleApiKey.tsx";
-
-const center = {
-    lat: 51.9194,
-    lng: 19.1451,
-};
 
 interface MarkerData {
     id: number;
@@ -22,39 +17,56 @@ const options = {
     mapTypeControl: false, // Ukrywa przełącznik "Map/Satellite"
 };
 
-const markers: MarkerData[] = [
-    {id: 1, name: "Kościół A", position: {lat: 51.9194, lng: 19.1451}},
-    {id: 2, name: "Kościół B", position: {lat: 50.0614, lng: 19.9372}},
-];
+const geocoder = new google.maps.Geocoder();
 
-const Map: React.FC = () => {
-    const { isLoaded } = useLoadScript({
-        googleMapsApiKey: googleApiKey
+
+function Map() {
+    const [center, setCenter] = useState<google.maps.LatLngLiteral>({lat: 51.9194,lng: 19.1451})
+    const [location, setLocation] = useState("");
+    const [markers, setMarkers] = useState<MarkerData[]>([
+        {id: 1, name: "Kościół A", position: {lat: 51.9194, lng: 19.1451}},
+        {id: 2, name: "Kościół B", position: {lat: 50.0614, lng: 19.9372}},
+    ]);
+    const clear = () => {
+        setMarkers([])
+    }
+    const {isLoaded} = useLoadScript({
+        googleMapsApiKey: googleApiKey,
     });
+    const geocode = async (request: google.maps.GeocoderRequest) => {
+        const results = await geocoder.geocode(request)
+        try {
+            setCenter(results[0].geometry.location)
+        } catch (error) {
+
+        }
+    }
 
     if (!isLoaded) return <div>Loading...</div>;
 
     return (
         <div className="map-container">
-            <GoogleMap mapContainerClassName={"google-map"} center={center} zoom={6} options={options}>
+            <GoogleMap mapContainerClassName={"google-map"} center={center} zoom={6} options={options} onClick={}>
                 {markers.map(marker => (
                     <Marker key={marker.id} position={marker.position}/>
                 ))}
             </GoogleMap>
             <div className={"map-buttons"}>
-                <input type={"text"} className={"location-input"} placeholder={"Enter a location"}/>
+                <input type={"text"} className={"location-input"} placeholder={"Enter a location"}
+                       onChange={(e) => setLocation(e.target.value)}/>
                 <button type={"button"} className={"map-button"} onClick={() => {
+                    geocode(location)
                 }}>
                     Geocode
                 </button>
                 <button type={"button"} className={"map-button"} onClick={() => {
+                    clear()
                 }}>
                     Clear
                 </button>
             </div>
         </div>
     );
-};
-
+}
 
 export default Map;
