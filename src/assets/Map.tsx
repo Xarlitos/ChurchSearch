@@ -20,7 +20,7 @@ interface MapProps {
     apiKey: string
 }
 
-const Map: React.FC<MapProps> = ({ apiKey }) =>  {
+const Map: React.FC<MapProps> = ({ apiKey }) => {
     const [center, setCenter] = useState<google.maps.LatLngLiteral>({lat: 51.9194, lng: 19.1451})
     const [location, setLocation] = useState("");
     const [markers, setMarkers] = useState<MarkerData[]>([
@@ -75,13 +75,13 @@ const Map: React.FC<MapProps> = ({ apiKey }) =>  {
             <div className={"map-buttons"}>
                 <input type={"text"} className={"location-input"} placeholder={"Enter a location"}
                        onChange={(e) => setLocation(e.target.value)}/>
-                <button type={"button"} className={"map-button"} onClick={ async () => {
-                        try {
-                            await geocode({address: location});
-                            console.log("Geocode succeeded");
-                        } catch (error) {
-                            console.error("Geocode error:", error);
-                        }
+                <button type={"button"} className={"map-button"} onClick={async () => {
+                    try {
+                        await geocode({address: location});
+                        console.log("Geocode succeeded");
+                    } catch (error) {
+                        console.error("Geocode error:", error);
+                    }
                 }}>
                     Geocode
                 </button>
