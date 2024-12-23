@@ -1,15 +1,19 @@
-import React, {useState} from "react";
-import {useLoadScript} from "@react-google-maps/api";
+import React, {useEffect, useRef, useState} from "react";
+import {useLoadScript, Libraries} from "@react-google-maps/api";
 import NewMap from "./components/Map/Map.tsx";
 import MapButtons from "./components/Map/MapButtons";
 import useGeocode from "./hooks/useGeocode";
 import "./styles/App.css"
+import useNearbySearch from "./hooks/useNearbySearch.ts";
 
 interface MarkerData {
     id: number;
     name: string;
     position: google.maps.LatLngLiteral;
 }
+
+const libraries: Libraries = ["places"]; // Dodaj "places" do bibliotek
+
 
 const options = {
     disableDefaultUI: true, // Wyłącza wszystkie domyślne przyciski
@@ -30,9 +34,33 @@ const App: React.FC = () => {
 
     const {isLoaded} = useLoadScript({
         googleMapsApiKey: apiKey,
+        libraries,
     });
 
+    const mapRef = useRef<google.maps.Map | null>(null); // Referencja do mapy
+    const {searchNearby} = useNearbySearch(mapRef.current); // Hook do Nearby Search
+
     const {geocode} = useGeocode()
+
+    useEffect(() => {
+        // Wykonaj wyszukiwanie, gdy mapRef istnieje
+        if (mapRef.current) {
+            searchNearby(center, 5000) // 5000m (5 km) promień wyszukiwania
+                .then((places) => {
+                    // Przekształć wyniki na markery
+                    const churchMarkers = places.map((place, index) => ({
+                        id: index,
+                        name: place.name || "Nieznany kościół",
+                        position: {
+                            lat: place.geometry?.location?.lat() ?? 0,
+                            lng: place.geometry?.location?.lng() ?? 0,
+                        },
+                    }));
+                    setMarkers(churchMarkers);
+                })
+                .catch(console.error);
+        }
+    }, [center]); // Aktualizuj, gdy zmienia się "center"
 
     const handleGeocode = async (location: string) => {
         try {
@@ -50,7 +78,7 @@ const App: React.FC = () => {
     }
 
     const clearMarkers = () => {
-        clearMarkers()
+        setMarkers([])
     }
 
 
@@ -59,7 +87,7 @@ const App: React.FC = () => {
     return (
         <div className="map-container">
             <MapButtons onGeocode={handleGeocode} onClear={clearMarkers}/>
-            <NewMap center={center} markers={markers} options={options}/>
+            <NewMap center={center} markers={markers} options={options} mapRef={(map) => (mapRef.current = map)}/>
         </div>
     )
 }

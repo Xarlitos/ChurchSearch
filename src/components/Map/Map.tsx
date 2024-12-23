@@ -10,12 +10,15 @@ interface MapProps {
         position: google.maps.LatLngLiteral;
     }[];
     options: google.maps.MapOptions;
+    mapRef?: (map: google.maps.Map | null) => void;
 }
 
 
-const Map: React.FC<MapProps> = ({center, markers, options}) => {
+const Map: React.FC<MapProps> = ({center, markers, options, mapRef}) => {
     return (
-        <GoogleMap mapContainerClassName={"google-map"} center={center} zoom={6} options={options}>
+        <GoogleMap mapContainerClassName={"google-map"} center={center} zoom={6} options={options}
+                   onLoad={(map) => mapRef?.(map)} // Zwróć instancję mapy
+                   onUnmount={() => mapRef?.(null)}>
             {markers.map(marker => (
                 <Marker key={marker.id} position={marker.position}/>
             ))}
