@@ -1,0 +1,9 @@
+.google-map{
+    display: flex;
+    justify-content: center; /* Wycentrowanie w osi poziomej */
+    align-items: center; /* Wycentrowanie w osi pionowej */
+    width: 100%;
+    height: 700px;
+    pointer-events: auto;
+}
+
