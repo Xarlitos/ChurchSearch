@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {useLoadScript, Libraries} from "@react-google-maps/api";
+import {Libraries, useLoadScript} from "@react-google-maps/api";
 import NewMap from "./components/Map/Map.tsx";
 import MapButtons from "./components/Map/MapButtons";
 import useGeocode from "./hooks/useGeocode";
@@ -10,10 +10,10 @@ interface MarkerData {
     id: number;
     name: string;
     position: google.maps.LatLngLiteral;
+    description?: string;
+    address?: string;
+    hours?: string;
 }
-
-const libraries: Libraries = ["places"]; // Dodaj "places" do bibliotek
-
 
 const options = {
     disableDefaultUI: true, // Wyłącza wszystkie domyślne przyciski
@@ -23,23 +23,40 @@ const options = {
     mapTypeControl: false, // Ukrywa przełącznik "Map/Satellite"
 };
 
+const LIBRARIES: Libraries = ["places", "marker"];
+
 const App: React.FC = () => {
 
     const apiKey: string = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-    const [center, setCenter] = useState<google.maps.LatLngLiteral>({lat: 51.9194, lng: 19.1451})
-    const [markers, setMarkers] = useState<MarkerData[]>([
-        {id: 1, name: "Kościół A", position: {lat: 51.9194, lng: 19.1451}},
-        {id: 2, name: "Kościół B", position: {lat: 50.0614, lng: 19.9372}},
-    ]);
 
     const {isLoaded} = useLoadScript({
         googleMapsApiKey: apiKey,
-        libraries,
+        libraries: LIBRARIES
     });
+
+    const [center, setCenter] = useState<google.maps.LatLngLiteral>({lat: 51.9194, lng: 19.1451})
+
+    const [markers, setMarkers] = useState<MarkerData[]>([
+        {
+            id: 1,
+            name: "Kościół A",
+            position: {lat: 51.9194, lng: 19.1451},
+            description: "Stary, zabytkowy kościół w centrum miasta.",
+            address: "Ul. Kościelna 1, Warszawa",
+            hours: "Pn-Pt: 8:00 - 18:00, Sb-Nd: 9:00 - 19:00",
+        },
+        {
+            id: 2,
+            name: "Kościół B",
+            position: {lat: 50.0614, lng: 19.9372},
+            description: "Nowoczesny kościół w południowej dzielnicy miasta.",
+            address: "Ul. Krakowska 5, Kraków",
+            hours: "Pn-Pt: 7:00 - 17:00, Sb-Nd: 8:00 - 20:00",
+        },
+    ]);
 
     const mapRef = useRef<google.maps.Map | null>(null); // Referencja do mapy
     const {searchNearby} = useNearbySearch(mapRef.current); // Hook do Nearby Search
-
     const {geocode} = useGeocode()
 
     useEffect(() => {
@@ -55,12 +72,15 @@ const App: React.FC = () => {
                             lat: place.geometry?.location?.lat() ?? 0,
                             lng: place.geometry?.location?.lng() ?? 0,
                         },
+                        description: place.types?.join(", ") || "Brak opisu",
+                        address: place.vicinity || "Brak adresu",
+                        hours: place.opening_hours?.weekday_text?.join("<br>") || "Brak informacji o godzinach",
                     }));
                     setMarkers(churchMarkers);
                 })
                 .catch(console.error);
         }
-    }, [center]); // Aktualizuj, gdy zmienia się "center"
+    }, [center, searchNearby]); // Aktualizuj, gdy zmienia się "center"
 
     const handleGeocode = async (location: string) => {
         try {
@@ -81,13 +101,45 @@ const App: React.FC = () => {
         setMarkers([])
     }
 
+    const [selectedMarker, setSelectedMarker] = useState<google.maps.Marker | null>(null);
+    const infoWindow = useRef<google.maps.InfoWindow | null>(null);
+
+    useEffect(() => {
+        if (!isLoaded) return;
+        if (!infoWindow.current) {
+            infoWindow.current = new google.maps.InfoWindow();}
+    }, [isLoaded]);
+
+    const handleMarkerClick = (
+        marker: MarkerData
+    ) => {
+        if (!mapRef.current || !infoWindow.current) {
+            console.error("Map or InfoWindow is not available.");
+            return;
+        }
+
+        const {name, description,position, address, hours} = marker;
+        const content = `
+        <div>
+            <h3>${name}</h3>
+            <p>${description}</p>
+            <p><strong>Adres:</strong> ${address}</p>
+            <p><strong>Godziny otwarcia:</strong> ${hours}</p>
+        </div>
+    `;
+
+        infoWindow.current.setContent(content);
+        infoWindow.current.setPosition(position);
+        infoWindow.current.open(mapRef.current);
+    };
 
     if (!isLoaded) return <div>Loading...</div>;
 
     return (
         <div className="map-container">
             <MapButtons onGeocode={handleGeocode} onClear={clearMarkers}/>
-            <NewMap center={center} markers={markers} options={options} mapRef={(map) => (mapRef.current = map)}/>
+            <NewMap center={center} markers={markers} options={options} mapRef={(map) => (mapRef.current = map)}
+                    onClickMarker={(marker) => handleMarkerClick(marker)} />
         </div>
     )
 }

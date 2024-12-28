@@ -34,38 +34,4 @@
     padding: 8px 16px;
     margin-right: 8px;
 }
-/*
-.map-buttons {
-    position: absolute; !* Pozwala na umiejscowienie na mapie *!
-    top: 10px;          !* Odstęp od góry *!
-    left: 10px;         !* Odstęp od lewej *!
-    z-index: 1000;      !* Umieszcza nad mapą *!
-    background: rgba(255, 255, 255, 0.9); !* Przezroczyste tło *!
-    border-radius: 8px;
-    padding: 10px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3); !* Lekki cień *!
-}
 
-.map-button {
-    margin: 5px 0;          !* Odstęp pomiędzy przyciskami *!
-    padding: 8px 16px;
-    cursor: pointer;
-    background-color: #4CAF50; !* Zielony kolor *!
-    color: white;             !* Kolor tekstu *!
-    border: none;
-    border-radius: 4px;
-    transition: background-color 0.3s;
-}
-
-.map-button:hover {
-    background-color: #45a049; !* Zmiana koloru po najechaniu *!
-}
-
-.location-input {
-    margin-bottom: 10px;
-    padding: 8px;
-    font-size: 16px;
-    border: 1px solid #ccc; !* Szare obramowanie *!
-    border-radius: 4px;
-    width: calc(100% - 16px); !* Rozciąga się w obrębie kontenera *!
-}*/

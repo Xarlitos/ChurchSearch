@@ -6,7 +6,7 @@
   width: 100%;
   height: 700px;
   background-color: #242424;
-  overflow: hidden;
+  overflow: visible;
   margin-top: 8%;
 }
 
@@ -21,4 +21,10 @@
   position: relative;
   width: 100%;   /* Zajmuje całą szerokość */
   height: 700px; /* Wysokość aplikacji */
+}
+
+.gm-style-iw {
+  z-index: 1000 !important; /* Przysłania wszystko */
+  top: 0 !important; /* Możesz to wyregulować */
+  transform: translateY(0) !important; /* Usuwa przesunięcia */
 }
