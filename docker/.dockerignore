@@ -1,0 +1,8 @@
+# wykluczenie smieci z kontenera
+node_modules
+dist
+logs
+.git
+docker/.dockerignore
+.vscode
+.idea

@@ -1,14 +1,25 @@
+# Church Locator
 # React + TypeScript + Vite
 
-to run project write and enter in CLI
+To run the project, type and enter the following commands in the CLI:
 ```
-npm i
+npm install
 npm run dev
 ```
 
-or if you have docker-compose
+Or, if you're using Docker Compose:
 ```
 docker compose up
+```
+To restart the app (first, grant permission to execute the script if it hasn't been set yet):
+```
+sudo chmod +x restart_app.sh
+./restart_app.sh
+```
+To stop Docker and clear memory (first, grant permission to execute the script if it hasn't been set yet):
+```
+sudo chmod +x docker_stop.sh
+./docker_stop.sh
 ```
 
 ## TODO List
@@ -55,9 +66,8 @@ docker compose up
     - [ ] Kod odpowiedzi **500** (Internal Server Error) – Błąd serwera.
 
 ### Dockeryzacja
-- [ ] Stworzenie `Dockerfile`:
-  - [ ] Budowa aplikacji React/Vite w środowisku Node.js.
-  - [ ] Obsługa plików statycznych w trybie produkcyjnym.
-- [ ] Stworzenie `docker-compose.yml`:
-  - [ ] Konfiguracja serwera deweloperskiego w trybie **development**.
-  - [ ] Konfiguracja trybu **production** z zbudowaną aplikacją.
+- [x] Stworzenie `Dockerfile`:
+  - [x] Budowa aplikacji React/Vite w środowisku Node.js.
+- [x] Stworzenie `docker-compose.yml`:
+  - [x] Konfiguracja serwera deweloperskiego w trybie **development**.
+- [ ] Budowa kontenera **backend** i **api** do obsługi endpointow
