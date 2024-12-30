@@ -13,6 +13,7 @@ const useGeocode =  () => {
                         lat: results[0].geometry.location.lat(),
                         lng: results[0].geometry.location.lng(),
                     };
+
                     resolve(location);
                 } else {
                     const errorMessage = `Geocode failed due to: ${status}`;

@@ -65,17 +65,20 @@ const App: React.FC = () => {
             searchNearby(center, 5000) // 5000m (5 km) promień wyszukiwania
                 .then((places) => {
                     // Przekształć wyniki na markery
-                    const churchMarkers = places.map((place, index) => ({
-                        id: index,
-                        name: place.name || "Nieznany kościół",
-                        position: {
-                            lat: place.geometry?.location?.lat() ?? 0,
-                            lng: place.geometry?.location?.lng() ?? 0,
-                        },
-                        description: place.types?.join(", ") || "Brak opisu",
-                        address: place.vicinity || "Brak adresu",
-                        hours: place.opening_hours?.weekday_text?.join("<br>") || "Brak informacji o godzinach",
-                    }));
+                    const churchMarkers = places.map((place, index) => {
+
+                        return {
+                            id: index,
+                            name: place.name || "Nieznany kościół",
+                            position: {
+                                lat: place.geometry?.location?.lat() ?? 0,
+                                lng: place.geometry?.location?.lng() ?? 0,
+                            },
+                            description: place.types?.join(", ") || "Brak opisu",
+                            address: place.vicinity || "Brak adresu",
+                            hours: place.opening_hours?.weekday_text?.join("<br>") || "Brak informacji o godzinach",
+                        }
+                    });
                     setMarkers(churchMarkers);
                 })
                 .catch(console.error);
@@ -101,13 +104,13 @@ const App: React.FC = () => {
         setMarkers([])
     }
 
-    const [selectedMarker, setSelectedMarker] = useState<google.maps.Marker | null>(null);
     const infoWindow = useRef<google.maps.InfoWindow | null>(null);
 
     useEffect(() => {
         if (!isLoaded) return;
         if (!infoWindow.current) {
-            infoWindow.current = new google.maps.InfoWindow();}
+            infoWindow.current = new google.maps.InfoWindow();
+        }
     }, [isLoaded]);
 
     const handleMarkerClick = (
@@ -118,7 +121,7 @@ const App: React.FC = () => {
             return;
         }
 
-        const {name, description,position, address, hours} = marker;
+        const {name, description, position, address, hours} = marker;
         const content = `
         <div>
             <h3>${name}</h3>
@@ -139,7 +142,7 @@ const App: React.FC = () => {
         <div className="map-container">
             <MapButtons onGeocode={handleGeocode} onClear={clearMarkers}/>
             <NewMap center={center} markers={markers} options={options} mapRef={(map) => (mapRef.current = map)}
-                    onClickMarker={(marker) => handleMarkerClick(marker)} />
+                    onClickMarker={(marker) => handleMarkerClick(marker)}/>
         </div>
     )
 }
