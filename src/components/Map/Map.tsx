@@ -8,6 +8,7 @@ interface MarkerData {
     position: google.maps.LatLngLiteral;
     description?: string;
     address?: string;
+    postalCode?: string;
     hours?: string;
 }
 
