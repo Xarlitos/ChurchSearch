@@ -3,6 +3,5 @@ node_modules
 dist
 logs
 .git
-docker/.dockerignore
 .vscode
 .idea

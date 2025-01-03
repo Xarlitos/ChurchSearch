@@ -20,19 +20,27 @@ npm install
 npm run dev
 ```
 
+add to **C:\Windows\System32\drivers\etc\hosts** line 
+```
+127.0.0.1    church.local
+```
+
 Or, if you're using Docker Compose:
 ```
-docker compose up
+cd docker/
+sudo chmod +x gen-ssl.sh
+./gen-ssl.sh
+docker-compose up --build
 ```
-To restart the app (first, grant permission to execute the script if it hasn't been set yet):
+To restart the app:
 ```
 sudo chmod +x restart_app.sh
 ./restart_app.sh
 ```
-To stop Docker and clear memory (first, grant permission to execute the script if it hasn't been set yet):
+To stop Docker and clear memory:
 ```
-sudo chmod +x docker_stop.sh
-./docker_stop.sh
+sudo chmod +x stop_app.sh
+./stop_app.sh
 ```
 
 ## TODO List
@@ -71,20 +79,16 @@ sudo chmod +x docker_stop.sh
 
 ### Obsługa Nginx w Dockerze
 //m.domanowski
-- [ ] Stworzenie pliku konfiguracyjnego Nginx:
-  - [ ] Konfiguracja serwera Nginx do nasłuchiwania na portach **80** i **443**.
-  - [ ] Przekierowywanie ruchu z portu **80** do **443** (HTTPS).
-  - [ ] Obsługa domeny **church.local** i przekierowanie ruchu do serwera Node.js na porcie aplikacji frontendowej (np. 5173).
-  - [ ] Włączenie obsługi SSL przy użyciu certyfikatu samopodpisanego lub Let's Encrypt.
+- [x] Stworzenie pliku konfiguracyjnego Nginx:
+  - [x] Konfiguracja serwera Nginx do nasłuchiwania na portach **80** i **443**.
+  - [x] Przekierowywanie ruchu z portu **80** do **443** (HTTPS).
+  - [x] Obsługa domeny **church.local** i przekierowanie ruchu do serwera frontu w node.js.
+  - [x] Włączenie obsługi SSL przy użyciu certyfikatu samopodpisanego **skrypt docker/gen-ssl.sh**
 
-- [ ] Stworzenie `Dockerfile` dla Nginx:
-  - [ ] Kopiowanie pliku konfiguracyjnego Nginx do obrazu.
-  - [ ] Ustawienie katalogu z certyfikatami SSL.
-
-- [ ] Aktualizacja `docker-compose.yml`:
-  - [ ] Dodanie usługi Nginx w kontenerze.
-  - [ ] Powiązanie z innymi usługami, np. aplikacją frontendową.
-  - [ ] Mapowanie portów **80** i **443** na hosta.
+- [x] Aktualizacja `docker-compose.yml`:
+  - [x] Dodanie usługi Nginx w kontenerze.
+  - [x] Powiązanie z frontem - proxy/bridge
+  - [x] Mapowanie portów **80** i **443** na hosta.
 
 - [ ] Testowanie:
   - [ ] Weryfikacja działania przekierowania z HTTP na HTTPS.
