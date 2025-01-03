@@ -38,52 +38,60 @@ sudo chmod +x docker_stop.sh
 ## TODO List
 
 ### Front-End Aplikacji
+//m.burdak
 - [ ] Stworzenie aplikacji w React.
   - [x] Użycie **Vite** do stworzenia aplikacji.
-  - [ ] Podstawowa struktura komponentów i routingu.
+  - [x] Podstawowa struktura komponentów i routingu.
   - [x] Wyświetlanie mapy z wykorzystaniem **Google Maps API**.
   - [x] Wyświetlanie wyników wyszukiwania kościołów na mapie.
+  - [ ] Ulepszenie UI/UX
+  - [ ] ulepszenie wyświetlania etykiety po kliknięciu na wskaźnik
 
 ### Obsługa Logowania do Konta Google
+//do ustalenia
 - [ ] Implementacja logowania za pomocą **Google OAuth**.
   - [ ] Użycie **Google Sign-In** API.
   - [ ] Integracja z aplikacją React do autoryzacji użytkownika.
   - [ ] Przechowywanie tokenu logowania (np. w lokalnym stanie lub w `localStorage`).
 
 ### Obsługa Dodawania Lokalizacji do Ulubionych na Koncie Google
+//do ustalenia
 - [ ] Dodanie funkcji, która pozwala użytkownikowi na:
   - [x] Kliknięcie na kościół na mapie wyświetlanej w aplikacji.
   - [ ] Dodanie lokalizacji kościoła do listy ulubionych w koncie Google.
   - [ ] Użycie **Google Places API** lub **Google My Places API** do zapisywania lokalizacji na koncie Google użytkownika.
   - [ ] Powiadomienie użytkownika o pomyślnym dodaniu lokalizacji.
 
-### Backend do Obsługi GET i POST
-- [ ] Stworzenie backendu w celu obsługi zapytań **GET** i **POST**:
-  - [ ] Stworzenie serwera backendowego przy użyciu **Node.js** i **Express**.
-  - [ ] Obsługa zapytań **GET** do pobierania danych.
-  - [ ] Obsługa zapytań **POST** do zapisywania danych użytkownika (np. ulubionych lokalizacji).
-  - [ ] Obsługa odpowiednich kodów statusu HTTP (200, 201, 400, 404, 500).
-  - [ ] Integracja backendu z front-endem React (np. wysyłanie danych z formularzy i odbieranie wyników).
-
-
-### API Endpoints
-- [ ] Obsługa metod **GET** i **POST**:
-  - **GET /api/data**:
-    - [ ] Kod odpowiedzi **200** (OK) – Pomyślne pobranie danych.
-    - [ ] Kod odpowiedzi **404** (Not Found) – Dane nie zostały znalezione.
-    - [ ] Kod odpowiedzi **500** (Internal Server Error) – Błąd serwera.
-  - **POST /api/data**:
-    - [ ] Kod odpowiedzi **201** (Created) – Pomyślne zapisanie danych.
-    - [ ] Kod odpowiedzi **400** (Bad Request) – Brak wymaganych danych w ciele zapytania.
-    - [ ] Kod odpowiedzi **404** (Not Found) – Niepoprawna lokalizacja zasobu.
-    - [ ] Kod odpowiedzi **500** (Internal Server Error) – Błąd serwera.
-
 ### Dockeryzacja
-- [x] Stworzenie `Dockerfile`:
+//m.domanows
+- [x] Stworzenie `Dockerfile`: 
   - [x] Budowa aplikacji React/Vite w środowisku Node.js.
 - [x] Stworzenie `docker-compose.yml`:
   - [x] Konfiguracja serwera deweloperskiego w trybie **development**.
-- [ ] Budowa kontenera **backend** i **api** do obsługi endpointow
+
+### Obsługa Nginx w Dockerze
+//m.domanowski
+- [ ] Stworzenie pliku konfiguracyjnego Nginx:
+  - [ ] Konfiguracja serwera Nginx do nasłuchiwania na portach **80** i **443**.
+  - [ ] Przekierowywanie ruchu z portu **80** do **443** (HTTPS).
+  - [ ] Obsługa domeny **church.local** i przekierowanie ruchu do serwera Node.js na porcie aplikacji frontendowej (np. 5173).
+  - [ ] Włączenie obsługi SSL przy użyciu certyfikatu samopodpisanego lub Let's Encrypt.
+
+- [ ] Stworzenie `Dockerfile` dla Nginx:
+  - [ ] Kopiowanie pliku konfiguracyjnego Nginx do obrazu.
+  - [ ] Ustawienie katalogu z certyfikatami SSL.
+
+- [ ] Aktualizacja `docker-compose.yml`:
+  - [ ] Dodanie usługi Nginx w kontenerze.
+  - [ ] Powiązanie z innymi usługami, np. aplikacją frontendową.
+  - [ ] Mapowanie portów **80** i **443** na hosta.
+
+- [ ] Testowanie:
+  - [ ] Weryfikacja działania przekierowania z HTTP na HTTPS.
+  - [ ] Sprawdzenie obsługi domeny **church.local**.
+  - [ ] Testowanie poprawności certyfikatów SSL.
+
+
 
 # License 
 MIT License
