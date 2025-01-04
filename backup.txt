@@ -1,0 +1,12 @@
+
+-----
+vite.config.tsc
+
+  "scripts": {
+    //"dev": "concurrently \"vite\" \"npm run start-server\"",
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "start-server": "nodemon server/server.js"
+  }

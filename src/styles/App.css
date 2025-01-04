@@ -11,16 +11,16 @@
 }
 
 .map-container > div {
-  width: 80%; /* Szerokość mapy */
-  height: 80%; /* Wysokość mapy */
-  max-width: 1200px; /* Opcjonalnie maksymalna szerokość */
-  max-height: 800px; /* Opcjonalnie maksymalna wysokość */
+  width: 100%; /* Szerokość mapy */
+  height: 100%; /* Wysokość mapy */
+  /*max-width: 1200px; /* Opcjonalnie maksymalna szerokość */
+  /*max-height: 800px; /* Opcjonalnie maksymalna wysokość */
 }
 
 .app-container {
   position: relative;
   width: 100%;   /* Zajmuje całą szerokość */
-  height: 700px; /* Wysokość aplikacji */
+  height: 100%; /* Wysokość aplikacji */
 }
 
 .gm-style-iw {

@@ -2,9 +2,10 @@ version: '3.8'
 
 services:
   app:
+    container_name: front
     build:
       context: .
-      dockerfile: docker/Dockerfile
+      dockerfile: docker/Dockerfile.node
     ports:
       - "5173:5173"
     volumes:
@@ -13,3 +14,32 @@ services:
     command: npm run dev
     environment:
       - NODE_ENV=development
+  nginx:
+    container_name: nginx
+    image: nginx:latest  # Zamiast build, używamy bezpośrednio najnowszego obrazu
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - app
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/ssl/server.crt:/etc/ssl/certs/server.crt
+      - ./docker/ssl/server.key:/etc/ssl/private/server.key
+    restart: always
+
+  # nginx:
+  #   container_name: nginx
+  #   build:
+  #     context: .
+  #     dockerfile: docker/Dockerfile.nginx
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   depends_on:
+  #     - app
+  #   volumes:
+  #     - ./docker/nginx.conf:/etc/nginx/nginx.conf
+  #     - ./docker/ssl/server.crt:/etc/ssl/certs/server.crt
+  #     - ./docker/ssl/server.key:/etc/ssl/private/server.key
+  #   restart: always

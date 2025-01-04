@@ -20,70 +20,82 @@ npm install
 npm run dev
 ```
 
+add to **C:\Windows\System32\drivers\etc\hosts** line 
+```
+127.0.0.1    church.local
+```
+
 Or, if you're using Docker Compose:
 ```
-docker compose up
+cd docker/
+sudo chmod +x gen-ssl.sh
+./gen-ssl.sh
+docker-compose up --build
 ```
-To restart the app (first, grant permission to execute the script if it hasn't been set yet):
+To restart the app:
 ```
 sudo chmod +x restart_app.sh
 ./restart_app.sh
 ```
-To stop Docker and clear memory (first, grant permission to execute the script if it hasn't been set yet):
+To stop Docker and clear memory:
 ```
-sudo chmod +x docker_stop.sh
-./docker_stop.sh
+sudo chmod +x stop_app.sh
+./stop_app.sh
 ```
 
 ## TODO List
 
 ### Front-End Aplikacji
+//m.burdak
 - [ ] Stworzenie aplikacji w React.
   - [x] Użycie **Vite** do stworzenia aplikacji.
-  - [ ] Podstawowa struktura komponentów i routingu.
+  - [x] Podstawowa struktura komponentów i routingu.
   - [x] Wyświetlanie mapy z wykorzystaniem **Google Maps API**.
   - [x] Wyświetlanie wyników wyszukiwania kościołów na mapie.
+  - [ ] Ulepszenie UI/UX
+  - [ ] ulepszenie wyświetlania etykiety po kliknięciu na wskaźnik
 
 ### Obsługa Logowania do Konta Google
+//do ustalenia
 - [ ] Implementacja logowania za pomocą **Google OAuth**.
   - [ ] Użycie **Google Sign-In** API.
   - [ ] Integracja z aplikacją React do autoryzacji użytkownika.
   - [ ] Przechowywanie tokenu logowania (np. w lokalnym stanie lub w `localStorage`).
 
 ### Obsługa Dodawania Lokalizacji do Ulubionych na Koncie Google
+//do ustalenia
 - [ ] Dodanie funkcji, która pozwala użytkownikowi na:
   - [x] Kliknięcie na kościół na mapie wyświetlanej w aplikacji.
   - [ ] Dodanie lokalizacji kościoła do listy ulubionych w koncie Google.
   - [ ] Użycie **Google Places API** lub **Google My Places API** do zapisywania lokalizacji na koncie Google użytkownika.
   - [ ] Powiadomienie użytkownika o pomyślnym dodaniu lokalizacji.
 
-### Backend do Obsługi GET i POST
-- [ ] Stworzenie backendu w celu obsługi zapytań **GET** i **POST**:
-  - [ ] Stworzenie serwera backendowego przy użyciu **Node.js** i **Express**.
-  - [ ] Obsługa zapytań **GET** do pobierania danych.
-  - [ ] Obsługa zapytań **POST** do zapisywania danych użytkownika (np. ulubionych lokalizacji).
-  - [ ] Obsługa odpowiednich kodów statusu HTTP (200, 201, 400, 404, 500).
-  - [ ] Integracja backendu z front-endem React (np. wysyłanie danych z formularzy i odbieranie wyników).
-
-
-### API Endpoints
-- [ ] Obsługa metod **GET** i **POST**:
-  - **GET /api/data**:
-    - [ ] Kod odpowiedzi **200** (OK) – Pomyślne pobranie danych.
-    - [ ] Kod odpowiedzi **404** (Not Found) – Dane nie zostały znalezione.
-    - [ ] Kod odpowiedzi **500** (Internal Server Error) – Błąd serwera.
-  - **POST /api/data**:
-    - [ ] Kod odpowiedzi **201** (Created) – Pomyślne zapisanie danych.
-    - [ ] Kod odpowiedzi **400** (Bad Request) – Brak wymaganych danych w ciele zapytania.
-    - [ ] Kod odpowiedzi **404** (Not Found) – Niepoprawna lokalizacja zasobu.
-    - [ ] Kod odpowiedzi **500** (Internal Server Error) – Błąd serwera.
-
 ### Dockeryzacja
-- [x] Stworzenie `Dockerfile`:
+//m.domanows
+- [x] Stworzenie `Dockerfile`: 
   - [x] Budowa aplikacji React/Vite w środowisku Node.js.
 - [x] Stworzenie `docker-compose.yml`:
   - [x] Konfiguracja serwera deweloperskiego w trybie **development**.
-- [ ] Budowa kontenera **backend** i **api** do obsługi endpointow
+
+### Obsługa Nginx w Dockerze
+//m.domanowski
+- [x] Stworzenie pliku konfiguracyjnego Nginx:
+  - [x] Konfiguracja serwera Nginx do nasłuchiwania na portach **80** i **443**.
+  - [x] Przekierowywanie ruchu z portu **80** do **443** (HTTPS).
+  - [x] Obsługa domeny **church.local** i przekierowanie ruchu do serwera frontu w node.js.
+  - [x] Włączenie obsługi SSL przy użyciu certyfikatu samopodpisanego **skrypt docker/gen-ssl.sh**
+
+- [x] Aktualizacja `docker-compose.yml`:
+  - [x] Dodanie usługi Nginx w kontenerze.
+  - [x] Powiązanie z frontem - proxy/bridge
+  - [x] Mapowanie portów **80** i **443** na hosta.
+
+- [ ] Testowanie:
+  - [ ] Weryfikacja działania przekierowania z HTTP na HTTPS.
+  - [ ] Sprawdzenie obsługi domeny **church.local**.
+  - [ ] Testowanie poprawności certyfikatów SSL.
+
+
 
 # License 
 MIT License
