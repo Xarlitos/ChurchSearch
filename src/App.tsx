@@ -5,6 +5,9 @@ import MapButtons from "./components/Map/MapButtons";
 import useGeocode from "./hooks/useGeocode";
 import "./styles/App.css"
 import useNearbySearch from "./hooks/useNearbySearch.ts";
+import GoogleLoginButton from "./components/GoogleLoginButton.tsx";
+import {CredentialResponse} from "@react-oauth/google";
+import UserInfo from "./components/UserInfo.tsx";
 
 interface MarkerData {
     id: number;
@@ -13,6 +16,12 @@ interface MarkerData {
     description?: string;
     address?: string;
     hours?: string;
+}
+
+
+interface UserData {
+    name: string;
+    avatarUrl: string;
 }
 
 const options = {
@@ -29,13 +38,9 @@ const App: React.FC = () => {
 
     const apiKey: string = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
-    const {isLoaded} = useLoadScript({
-        googleMapsApiKey: apiKey,
-        libraries: LIBRARIES
-    });
+    const [user, setUser] = useState<UserData | null>(null);
 
     const [center, setCenter] = useState<google.maps.LatLngLiteral>({lat: 51.9194, lng: 19.1451})
-
     const [markers, setMarkers] = useState<MarkerData[]>([
         {
             id: 1,
@@ -54,14 +59,20 @@ const App: React.FC = () => {
             hours: "Pn-Pt: 7:00 - 17:00, Sb-Nd: 8:00 - 20:00",
         },
     ]);
+    const [shouldFetchMarkers, setShouldFetchMarkers] = useState(true);
 
     const mapRef = useRef<google.maps.Map | null>(null); // Referencja do mapy
     const {searchNearby} = useNearbySearch(mapRef.current); // Hook do Nearby Search
     const {geocode} = useGeocode()
 
+    const {isLoaded} = useLoadScript({
+        googleMapsApiKey: apiKey,
+        libraries: LIBRARIES
+    });
+
     useEffect(() => {
         // Wykonaj wyszukiwanie, gdy mapRef istnieje
-        if (mapRef.current) {
+        if (mapRef.current && shouldFetchMarkers) {
             searchNearby(center, 5000) // 5000m (5 km) promień wyszukiwania
                 .then((places) => {
                     // Przekształć wyniki na markery
@@ -80,7 +91,12 @@ const App: React.FC = () => {
                 })
                 .catch(console.error);
         }
-    }, [center, searchNearby]); // Aktualizuj, gdy zmienia się "center"
+    }, [center, searchNearby, shouldFetchMarkers]); // Aktualizuj, gdy zmienia się "center"
+
+    const clearMarkers = () => {
+        setMarkers([])
+        setShouldFetchMarkers(false)
+    }
 
     const handleGeocode = async (location: string) => {
         try {
@@ -92,13 +108,10 @@ const App: React.FC = () => {
                     {id: Date.now(), name: location, position: result},
                 ]);
             }
+            setShouldFetchMarkers(true)
         } catch (error) {
             console.error(error);
         }
-    }
-
-    const clearMarkers = () => {
-        setMarkers([])
     }
 
     const infoWindow = useRef<google.maps.InfoWindow | null>(null);
@@ -133,13 +146,45 @@ const App: React.FC = () => {
         infoWindow.current.open(mapRef.current);
     };
 
+    const handleSuccess = (response: CredentialResponse) => {
+        console.log("Logged in successfully!", response.credential);
+
+        const userData: UserData = {
+            name: "John Doe",
+            avatarUrl: "https://example.com/avatar.jpg",
+        };
+
+        setUser(userData);
+    };
+
+    const handleError = () => {
+        console.error("Login failed");
+    };
+
+    const handleLogout = () => {
+        setUser(null);
+    };
+
     if (!isLoaded) return <div>Loading...</div>;
 
     return (
-        <div className="map-container">
-            <MapButtons onGeocode={handleGeocode} onClear={clearMarkers}/>
-            <NewMap center={center} markers={markers} options={options} mapRef={(map) => (mapRef.current = map)}
-                    onClickMarker={(marker) => handleMarkerClick(marker)}/>
+        <div>
+            <div className="map-container">
+                <MapButtons onGeocode={handleGeocode} onClear={clearMarkers}/>
+                <NewMap center={center} markers={markers} options={options} mapRef={(map) => (mapRef.current = map)}
+                        onClickMarker={(marker) => handleMarkerClick(marker)}/>
+            </div>
+            <div className={"google-login-container"}>
+                {!user ? (
+                    <GoogleLoginButton onSuccess={handleSuccess} onError={handleError} />
+                ) : (
+                    <UserInfo
+                        name={user.name}
+                        avatarUrl={user.avatarUrl}
+                        onLogout={handleLogout}
+                    />
+                )}
+            </div>
         </div>
     )
 }

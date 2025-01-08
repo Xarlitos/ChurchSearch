@@ -28,3 +28,9 @@
   top: 0 !important; /* Możesz to wyregulować */
   transform: translateY(0) !important; /* Usuwa przesunięcia */
 }
+
+.google-login-container {
+  position: absolute;
+  left: 82%;
+  top: 30px; /* Odstęp od górnej krawędzi */
+}
