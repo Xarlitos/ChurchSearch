@@ -10,6 +10,7 @@ interface MarkerData {
     address?: string;
     postalCode?: string;
     hours?: string;
+    isFavourite?: boolean;
 }
 
 interface MapProps {
@@ -27,10 +28,21 @@ const Map: React.FC<MapProps> = ({center, markers, options, mapRef, onClickMarke
                    onLoad={(map) => mapRef?.(map)} // Zwróć instancję mapy
                    onUnmount={() => mapRef?.(null)}>
             {markers.map(marker => (
-                <MarkerF key={marker.id} position={marker.position} onClick = {() => {
-                    if (onClickMarker) {
-                        onClickMarker(marker);
-                    }
+                <MarkerF key={marker.id} position={marker.position}
+                         icon={{
+                             url: marker.isFavourite
+                             ?
+
+                                 "/favouriteMarker.png"
+                             :
+                                "/location.png",
+                             scaledSize: new google.maps.Size(30, 30), // Rozmiar ikony
+                             anchor: new google.maps.Point(20, 40) // Ustawienie punktu na dole ikony
+                         }}
+                    onClick = {() => {
+                        if (onClickMarker) {
+                            onClickMarker(marker);
+                        }
             }}/>
             ))}
         </GoogleMap>
