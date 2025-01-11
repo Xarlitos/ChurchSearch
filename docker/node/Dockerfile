@@ -5,13 +5,13 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Kopiujemy pliki package.json i package-lock.json
-COPY package*.json ./
+COPY ../package*.json ./
 
 # Instalujemy zależności
 RUN npm install
 
 # Kopiujemy pozostałe pliki projektu
-COPY . .
+COPY ../ ./
 
 # Eksponujemy port dla Vite
 EXPOSE 5173

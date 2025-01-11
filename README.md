@@ -4,14 +4,18 @@ Aplikacja umożliwia wyszukiwanie kościołów w określonym mieście za pomocą
 
 # Used Technologies
 
-- **Node.js** (via `node_modules/`, `package.json`)
-- **Docker** (via `docker-compose.yaml`, `install_docker.sh`)
-- **Git** (via `.git/`)
-- **TypeScript** (via `tsconfig` files)
-- **ESLint** (via `eslint.config.js`)
-- **Vite** (via `vite.config.ts`)
-- **HTML** (via `index.html`)
-- **npm** (via `package.json`)
+- **React** – A JavaScript library used for building user interfaces, especially for single-page applications (SPA). It enables the creation of dynamic and interactive web pages.
+- **Docker and Docker Compose** – Used for containerizing the application, ensuring easy deployment and scalability across different environments.
+- **Git** – Version control system used for managing the source code and collaboration within the team.
+- **TypeScript** – A superset of JavaScript that provides static typing, enabling better tooling and easier debugging.
+- **ESLint** – A static code analysis tool used to identify and fix problems in JavaScript and TypeScript code, ensuring code quality and consistency.
+- **Vite** – A build tool for JavaScript applications that provides fast compilation and Hot Module Replacement (HMR) for development.
+- **HTML** – The standard markup language used to structure the web pages.
+- **Nginx** – A web server and reverse proxy used to serve the application and handle HTTPS traffic in production environments.
+- **SSL (SSL certificates)** – Ensures secure communication through HTTPS, especially in production environments, by encrypting data in transit.
+- **WSL2** – Windows Subsystem for Linux 2, used for running Linux-based applications and tools on Windows, improving development workflow with Linux environments.
+- **Google API** – Various Google services, such as the Google Maps API or others, used to integrate Google features into the application.
+- **npm** – Package manager for managing JavaScript dependencies, used in conjunction with `package.json` for project configuration and scripts.
 
 # Run project
 To run the project, type and enter the following commands in the CLI:
@@ -22,27 +26,44 @@ npm run dev
 
 Or, if you're using Docker Compose:
 ```
-docker compose up
+./run_app.sh -run
 ```
-To restart the app (first, grant permission to execute the script if it hasn't been set yet):
+restart
 ```
-sudo chmod +x restart_app.sh
-./restart_app.sh
+./run_app.sh -restart
 ```
-To stop Docker and clear memory (first, grant permission to execute the script if it hasn't been set yet):
+kill
 ```
-sudo chmod +x docker_stop.sh
-./docker_stop.sh
+./run_app.sh -kill
 ```
+**Dodaj certyfikat do zaufanych:**
+    - W folderze C:\Users znajdziesz plik `rootCA.pem`.
+    - Uruchom **PowerShell** jako administrator i wykonaj komendę:
+      ```bash
+      Import-Certificate -FilePath "C:\Users\rootCA.pem" -CertStoreLocation "Cert:\LocalMachine\Root"
+      ```
+    - Następnie dodaj certyfikat w przeglądarce do zaufanych.
+
 
 ## TODO List
 
-### Front-End Aplikacji
-- [ ] Stworzenie aplikacji w React.
+### Budowa Aplikacji
+- [x] Stworzenie aplikacji w React.
   - [x] Użycie **Vite** do stworzenia aplikacji.
-  - [ ] Podstawowa struktura komponentów i routingu.
+  - [x] Podstawowa struktura komponentów i routingu.
   - [x] Wyświetlanie mapy z wykorzystaniem **Google Maps API**.
   - [x] Wyświetlanie wyników wyszukiwania kościołów na mapie.
+
+### Front-end aplikacji
+- [ ] Strona glówna:
+  - [ ] stopka z buttonami,
+  - [ ] okno z wyswietlanym mapy
+  - [ ] boczne menu: about, log in/log out
+- [ ] Okno/podstrona 'about':
+  - [ ] tytul
+  - [ ] krotki opis (jest w readme),
+  - [ ] autorzy i licencje (jest w readme).
+- [ ] okienko z szczegółami markera ulepszyć
 
 ### Obsługa Logowania do Konta Google
 - [ ] Implementacja logowania za pomocą **Google OAuth**.
@@ -57,33 +78,20 @@ sudo chmod +x docker_stop.sh
   - [ ] Użycie **Google Places API** lub **Google My Places API** do zapisywania lokalizacji na koncie Google użytkownika.
   - [ ] Powiadomienie użytkownika o pomyślnym dodaniu lokalizacji.
 
-### Backend do Obsługi GET i POST
-- [ ] Stworzenie backendu w celu obsługi zapytań **GET** i **POST**:
-  - [ ] Stworzenie serwera backendowego przy użyciu **Node.js** i **Express**.
-  - [ ] Obsługa zapytań **GET** do pobierania danych.
-  - [ ] Obsługa zapytań **POST** do zapisywania danych użytkownika (np. ulubionych lokalizacji).
-  - [ ] Obsługa odpowiednich kodów statusu HTTP (200, 201, 400, 404, 500).
-  - [ ] Integracja backendu z front-endem React (np. wysyłanie danych z formularzy i odbieranie wyników).
+### Docker compose
+- [x] **Dockeryzacja**
+    - [x] Konteneryzacja apliakcji **node.js**
+    - [x] konteneryzacja serwera **Nginx**
+    - [x] Utworzenie **nginx.conf** do serwowania React i obsługi HTTPS.
+    - [x] Stworzenie **Dockerfile**, który określa jak zbudować obraz aplikacji
+    - [x] Stworzenie **docker-compose.yml** dla node oraz nginx
+    - [x] Dodanie odpowiednich plików konfiguracyjnych `.dockerignore` oraz `.gitignore`
 
-
-### API Endpoints
-- [ ] Obsługa metod **GET** i **POST**:
-  - **GET /api/data**:
-    - [ ] Kod odpowiedzi **200** (OK) – Pomyślne pobranie danych.
-    - [ ] Kod odpowiedzi **404** (Not Found) – Dane nie zostały znalezione.
-    - [ ] Kod odpowiedzi **500** (Internal Server Error) – Błąd serwera.
-  - **POST /api/data**:
-    - [ ] Kod odpowiedzi **201** (Created) – Pomyślne zapisanie danych.
-    - [ ] Kod odpowiedzi **400** (Bad Request) – Brak wymaganych danych w ciele zapytania.
-    - [ ] Kod odpowiedzi **404** (Not Found) – Niepoprawna lokalizacja zasobu.
-    - [ ] Kod odpowiedzi **500** (Internal Server Error) – Błąd serwera.
-
-### Dockeryzacja
-- [x] Stworzenie `Dockerfile`:
-  - [x] Budowa aplikacji React/Vite w środowisku Node.js.
-- [x] Stworzenie `docker-compose.yml`:
-  - [x] Konfiguracja serwera deweloperskiego w trybie **development**.
-- [ ] Budowa kontenera **backend** i **api** do obsługi endpointow
+- [x] **SSL plus domena lokalna**
+    - [x] Skonfigurowanie SSL w aplikacji webowej
+    - [x] generowanie certyfikatów SSL
+    - [x] Przypisanie lokalnej domeny (np. `localhost` lub `church.local`) do aplikacji
+    - [x] Ustawienie serwera na obsługę HTTPS w środowisku deweloperskim
 
 # License 
 MIT License
