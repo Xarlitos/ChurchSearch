@@ -71,49 +71,69 @@ const App: React.FC = () => {
         libraries: LIBRARIES
     });
 
+    const handleGeocode = async (location: string) => {
+        try {
+            const result = await geocode(location)
+            if (result) {
+                const favorites: MarkerData[] = JSON.parse(localStorage.getItem("favorites") || "[]");
+
+                const newMarker = {
+                    id: Date.now(),
+                    name: location,
+                    position: result,
+                    isFavourite: !!favorites.find((fav) =>
+                        fav.position.lat === result.lat && fav.position.lng === result.lng
+                    ),
+                };
+
+                setCenter(result)
+                setMarkers((prev) => [...prev, newMarker]);
+            }
+            setShouldFetchMarkers(true)
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+
     useEffect(() => {
         // Wykonaj wyszukiwanie, gdy mapRef istnieje
         if (mapRef.current && shouldFetchMarkers) {
             searchNearby(center, 5000) // 5000m (5 km) promień wyszukiwania
                 .then((places) => {
-                    // Przekształć wyniki na markery
-                    const churchMarkers = places.map((place, index) => ({
-                        id: index,
-                        name: place.name || "Nieznany kościół",
-                        position: {
+                    const favorites: MarkerData[] = JSON.parse(localStorage.getItem("favorites") || "[]");
+
+                    const churchMarkers = places.map((place, index) => {
+                        const position = {
                             lat: place.geometry?.location?.lat() ?? 0,
                             lng: place.geometry?.location?.lng() ?? 0,
-                        },
-                        description: place.types?.join(", ") || "Brak opisu",
-                        address: place.vicinity || "Brak adresu",
-                        hours: place.opening_hours?.weekday_text?.join("<br>") || "Brak informacji o godzinach",
-                    }));
+                        };
+
+                        // Sprawdź, czy marker jest w ulubionych
+                        const isFavourite = !!favorites.find((fav) =>
+                            fav.position.lat === position.lat && fav.position.lng === position.lng
+                        );
+
+                        return {
+                            id: index,
+                            name: place.name || "Nieznany kościół",
+                            position,
+                            description: place.types?.join(", ") || "Brak opisu",
+                            address: place.vicinity || "Brak adresu",
+                            hours: place.opening_hours?.weekday_text?.join("<br>") || "Brak informacji o godzinach",
+                            isFavourite, // Dodaj właściwość
+                        };
+                    });
                     setMarkers(churchMarkers);
                 })
                 .catch(console.error)
-                setShouldFetchMarkers(false)
+            setShouldFetchMarkers(false)
         }
     }, [shouldFetchMarkers, searchNearby, center]); // Aktualizuj, gdy zmienia się "center"
 
     const clearMarkers = () => {
         setMarkers([])
         setShouldFetchMarkers(false)
-    }
-
-    const handleGeocode = async (location: string) => {
-        try {
-            const result = await geocode(location)
-            if (result) {
-                setCenter(result)
-                setMarkers((prev) => [
-                    ...prev,
-                    {id: Date.now(), name: location, position: result},
-                ]);
-            }
-            setShouldFetchMarkers(true)
-        } catch (error) {
-            console.error(error);
-        }
     }
 
     const infoWindow = useRef<google.maps.InfoWindow | null>(null);
@@ -163,13 +183,13 @@ const App: React.FC = () => {
         google.maps.event.addListenerOnce(infoWindow.current, "domready", () => {
             const button = document.getElementById(`add-to-favorites-${id}`);
             if (button) {
-                button.addEventListener("click", () => addToFavorites(marker));
+                button.addEventListener("click", () => AddAndRemoveFavoriteMarkers(marker));
             }
         });
 
     };
 
-    const addToFavorites = (marker: MarkerData) => {
+    const AddAndRemoveFavoriteMarkers = (marker: MarkerData) => {
         if (!user) {
             alert("Musisz być zalogowany, aby dodać marker do ulubionych.");
             return;
@@ -207,11 +227,10 @@ const App: React.FC = () => {
     const loadFavorites = () => {
         const favorites: MarkerData[] = JSON.parse(localStorage.getItem("favorites") || "[]");
 
-        // Aktualizacja stanu markerów, oznaczając ulubione
-        setMarkers((prev) =>
-            prev.map((marker) => ({
-                ...marker,
-                isFavourite: !!favorites.find((fav) => fav.id === marker.id),
+        setMarkers(
+            favorites.map((fav) => ({
+                ...fav,
+                isFavourite: true, // Każdy załadowany marker jest ulubiony
             }))
         );
     };
