@@ -3,7 +3,7 @@ import {Libraries, useLoadScript} from "@react-google-maps/api";
 import NewMap from "./components/Map/Map.tsx";
 import MapButtons from "./components/Map/MapButtons";
 import useGeocode from "./hooks/useGeocode";
-import "./styles/App.css"
+import "./styles/App.css";
 import useNearbySearch from "./hooks/useNearbySearch.ts";
 
 interface MarkerData {
@@ -16,26 +16,30 @@ interface MarkerData {
 }
 
 const options = {
-    disableDefaultUI: true, // Wyłącza wszystkie domyślne przyciski
-    zoomControl: false,     // Wyłącza przycisk zoomowania
-    fullscreenControl: false, // Wyłącza fullscreen
-    streetViewControl: false, // Wyłącza street view
-    mapTypeControl: false, // Ukrywa przełącznik "Map/Satellite"
+    disableDefaultUI: true,
+    zoomControl: false,
+    fullscreenControl: false,
+    streetViewControl: false,
+    mapTypeControl: false,
 };
 
 const LIBRARIES: Libraries = ["places", "marker"];
 
 const App: React.FC = () => {
+    const apiKey: string | undefined = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
-    const apiKey: string = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-
+    if (!apiKey) {
+        console.error("Google Maps API key is missing. Please set VITE_GOOGLE_MAPS_API_KEY in your .env file.");
+        return <div>Error: Missing Google Maps API Key.</div>;
+    }
+    console.error("Google Maps API key is ok.");
     const {isLoaded} = useLoadScript({
         googleMapsApiKey: apiKey,
         libraries: LIBRARIES
     });
 
-    const [center, setCenter] = useState<google.maps.LatLngLiteral>({lat: 51.9194, lng: 19.1451})
-
+    const [center, setCenter] = useState<google.maps.LatLngLiteral>({lat: 51.9194, lng: 19.1451});
+    // baza znacznikow, narazie w tablicy
     const [markers, setMarkers] = useState<MarkerData[]>([
         {
             id: 1,
@@ -55,16 +59,14 @@ const App: React.FC = () => {
         },
     ]);
 
-    const mapRef = useRef<google.maps.Map | null>(null); // Referencja do mapy
-    const {searchNearby} = useNearbySearch(mapRef.current); // Hook do Nearby Search
-    const {geocode} = useGeocode()
+    const mapRef = useRef<google.maps.Map | null>(null);
+    const {searchNearby} = useNearbySearch(mapRef.current);
+    const {geocode} = useGeocode();
 
     useEffect(() => {
-        // Wykonaj wyszukiwanie, gdy mapRef istnieje
         if (mapRef.current) {
-            searchNearby(center, 5000) // 5000m (5 km) promień wyszukiwania
+            searchNearby(center, 5000)
                 .then((places) => {
-                    // Przekształć wyniki na markery
                     const churchMarkers = places.map((place, index) => ({
                         id: index,
                         name: place.name || "Nieznany kościół",
@@ -80,13 +82,14 @@ const App: React.FC = () => {
                 })
                 .catch(console.error);
         }
-    }, [center, searchNearby]); // Aktualizuj, gdy zmienia się "center"
+    }, [center, searchNearby]);
 
+    // obsluga wyszukiwania i zaladowania wynikow
     const handleGeocode = async (location: string) => {
         try {
-            const result = await geocode(location)
+            const result = await geocode(location);
             if (result) {
-                setCenter(result)
+                setCenter(result);
                 setMarkers((prev) => [
                     ...prev,
                     {id: Date.now(), name: location, position: result},
@@ -95,11 +98,12 @@ const App: React.FC = () => {
         } catch (error) {
             console.error(error);
         }
-    }
+    };
 
+    // czyszczenie bazy
     const clearMarkers = () => {
-        setMarkers([])
-    }
+        setMarkers([]);
+    };
 
     const [selectedMarker, setSelectedMarker] = useState<google.maps.Marker | null>(null);
     const infoWindow = useRef<google.maps.InfoWindow | null>(null);
@@ -107,18 +111,18 @@ const App: React.FC = () => {
     useEffect(() => {
         if (!isLoaded) return;
         if (!infoWindow.current) {
-            infoWindow.current = new google.maps.InfoWindow();}
+            infoWindow.current = new google.maps.InfoWindow();
+        }
     }, [isLoaded]);
 
-    const handleMarkerClick = (
-        marker: MarkerData
-    ) => {
+    //obsługa kliknięcia na znacznik
+    const handleMarkerClick = (marker: MarkerData) => {
         if (!mapRef.current || !infoWindow.current) {
             console.error("Map or InfoWindow is not available.");
             return;
         }
 
-        const {name, description,position, address, hours} = marker;
+        const {name, description, position, address, hours} = marker;
         const content = `
         <div>
             <h3>${name}</h3>
@@ -126,7 +130,7 @@ const App: React.FC = () => {
             <p><strong>Adres:</strong> ${address}</p>
             <p><strong>Godziny otwarcia:</strong> ${hours}</p>
         </div>
-    `;
+        `;
 
         infoWindow.current.setContent(content);
         infoWindow.current.setPosition(position);
@@ -137,11 +141,11 @@ const App: React.FC = () => {
 
     return (
         <div className="map-container">
-            <MapButtons onGeocode={handleGeocode} onClear={clearMarkers}/>
-            <NewMap center={center} markers={markers} options={options} mapRef={(map) => (mapRef.current = map)}
+            <MapButtons onGeocode={handleGeocode} onClear={clearMarkers} />
+            <NewMap center={center} markers={markers} options={options} mapRef={(map) => (mapRef.current = map)} 
                     onClickMarker={(marker) => handleMarkerClick(marker)} />
         </div>
-    )
-}
+    );
+};
 
-export default App
+export default App;

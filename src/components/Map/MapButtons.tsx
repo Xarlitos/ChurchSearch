@@ -37,3 +37,4 @@ const MapButtons = ({ onGeocode, onClear }: MapButtonsProps) => {
 };
 
 export default MapButtons;
+
