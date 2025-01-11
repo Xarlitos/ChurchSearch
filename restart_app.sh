@@ -8,3 +8,4 @@ echo "wymazano poprzedni konfig, uruchamianie ponowne..."
 echo ""
 
 docker compose up --build
+

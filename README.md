@@ -4,14 +4,18 @@ Aplikacja umożliwia wyszukiwanie kościołów w określonym mieście za pomocą
 
 # Used Technologies
 
-- **Node.js** (via `node_modules/`, `package.json`)
-- **Docker** (via `docker-compose.yaml`, `install_docker.sh`)
-- **Git** (via `.git/`)
-- **TypeScript** (via `tsconfig` files)
-- **ESLint** (via `eslint.config.js`)
-- **Vite** (via `vite.config.ts`)
-- **HTML** (via `index.html`)
-- **npm** (via `package.json`)
+- **React** – A JavaScript library used for building user interfaces, especially for single-page applications (SPA). It enables the creation of dynamic and interactive web pages.
+- **Docker and Docker Compose** – Used for containerizing the application, ensuring easy deployment and scalability across different environments.
+- **Git** – Version control system used for managing the source code and collaboration within the team.
+- **TypeScript** – A superset of JavaScript that provides static typing, enabling better tooling and easier debugging.
+- **ESLint** – A static code analysis tool used to identify and fix problems in JavaScript and TypeScript code, ensuring code quality and consistency.
+- **Vite** – A build tool for JavaScript applications that provides fast compilation and Hot Module Replacement (HMR) for development.
+- **HTML** – The standard markup language used to structure the web pages.
+- **Nginx** – A web server and reverse proxy used to serve the application and handle HTTPS traffic in production environments.
+- **SSL (SSL certificates)** – Ensures secure communication through HTTPS, especially in production environments, by encrypting data in transit.
+- **WSL2** – Windows Subsystem for Linux 2, used for running Linux-based applications and tools on Windows, improving development workflow with Linux environments.
+- **Google API** – Various Google services, such as the Google Maps API or others, used to integrate Google features into the application.
+- **npm** – Package manager for managing JavaScript dependencies, used in conjunction with `package.json` for project configuration and scripts.
 
 # Run project
 To run the project, type and enter the following commands in the CLI:
@@ -27,33 +31,45 @@ add to **C:\Windows\System32\drivers\etc\hosts** line
 
 Or, if you're using Docker Compose:
 ```
-cd docker/
-sudo chmod +x gen-ssl.sh
-./gen-ssl.sh
-docker-compose up --build
+./run_app.sh -run
 ```
-To restart the app:
+restart
 ```
-sudo chmod +x restart_app.sh
-./restart_app.sh
+./run_app.sh -restart
 ```
-To stop Docker and clear memory:
+kill
 ```
-sudo chmod +x stop_app.sh
-./stop_app.sh
+./run_app.sh -kill
 ```
+**Dodaj certyfikat do zaufanych:**
+    - W folderze C:\Users znajdziesz plik `rootCA.pem`.
+    - Uruchom **PowerShell** jako administrator i wykonaj komendę:
+      ```bash
+      Import-Certificate -FilePath "C:\Users\rootCA.pem" -CertStoreLocation "Cert:\LocalMachine\Root"
+      ```
+    - Następnie dodaj certyfikat w przeglądarce do zaufanych.
+
 
 ## TODO List
 
-### Front-End Aplikacji
-//m.burdak
-- [ ] Stworzenie aplikacji w React.
+### Budowa Aplikacji
+- [x] Stworzenie aplikacji w React.
   - [x] Użycie **Vite** do stworzenia aplikacji.
+  - [x] Podstawowa struktura komponentów i routingu.
   - [x] Podstawowa struktura komponentów i routingu.
   - [x] Wyświetlanie mapy z wykorzystaniem **Google Maps API**.
   - [x] Wyświetlanie wyników wyszukiwania kościołów na mapie.
-  - [ ] Ulepszenie UI/UX
-  - [ ] ulepszenie wyświetlania etykiety po kliknięciu na wskaźnik
+
+### Front-end aplikacji
+- [ ] Strona glówna:
+  - [ ] stopka z buttonami,
+  - [ ] okno z wyswietlanym mapy
+  - [ ] boczne menu: about, log in/log out
+- [ ] Okno/podstrona 'about':
+  - [ ] tytul
+  - [ ] krotki opis (jest w readme),
+  - [ ] autorzy i licencje (jest w readme).
+- [ ] okienko z szczegółami markera ulepszyć
 
 ### Obsługa Logowania do Konta Google
 //do ustalenia
@@ -70,32 +86,20 @@ sudo chmod +x stop_app.sh
   - [ ] Użycie **Google Places API** lub **Google My Places API** do zapisywania lokalizacji na koncie Google użytkownika.
   - [ ] Powiadomienie użytkownika o pomyślnym dodaniu lokalizacji.
 
-### Dockeryzacja
-//m.domanows
-- [x] Stworzenie `Dockerfile`: 
-  - [x] Budowa aplikacji React/Vite w środowisku Node.js.
-- [x] Stworzenie `docker-compose.yml`:
-  - [x] Konfiguracja serwera deweloperskiego w trybie **development**.
+### Docker compose
+- [x] **Dockeryzacja**
+    - [x] Konteneryzacja apliakcji **node.js**
+    - [x] konteneryzacja serwera **Nginx**
+    - [x] Utworzenie **nginx.conf** do serwowania React i obsługi HTTPS.
+    - [x] Stworzenie **Dockerfile**, który określa jak zbudować obraz aplikacji
+    - [x] Stworzenie **docker-compose.yml** dla node oraz nginx
+    - [x] Dodanie odpowiednich plików konfiguracyjnych `.dockerignore` oraz `.gitignore`
 
-### Obsługa Nginx w Dockerze
-//m.domanowski
-- [x] Stworzenie pliku konfiguracyjnego Nginx:
-  - [x] Konfiguracja serwera Nginx do nasłuchiwania na portach **80** i **443**.
-  - [x] Przekierowywanie ruchu z portu **80** do **443** (HTTPS).
-  - [x] Obsługa domeny **church.local** i przekierowanie ruchu do serwera frontu w node.js.
-  - [x] Włączenie obsługi SSL przy użyciu certyfikatu samopodpisanego **skrypt docker/gen-ssl.sh**
-
-- [x] Aktualizacja `docker-compose.yml`:
-  - [x] Dodanie usługi Nginx w kontenerze.
-  - [x] Powiązanie z frontem - proxy/bridge
-  - [x] Mapowanie portów **80** i **443** na hosta.
-
-- [ ] Testowanie:
-  - [ ] Weryfikacja działania przekierowania z HTTP na HTTPS.
-  - [ ] Sprawdzenie obsługi domeny **church.local**.
-  - [ ] Testowanie poprawności certyfikatów SSL.
-
-
+- [x] **SSL plus domena lokalna**
+    - [x] Skonfigurowanie SSL w aplikacji webowej
+    - [x] generowanie certyfikatów SSL
+    - [x] Przypisanie lokalnej domeny (np. `localhost` lub `church.local`) do aplikacji
+    - [x] Ustawienie serwera na obsługę HTTPS w środowisku deweloperskim
 
 # License 
 MIT License
