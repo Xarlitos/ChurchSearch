@@ -1,6 +1,6 @@
 import React from "react";
 import {GoogleMap, MarkerF} from "@react-google-maps/api";
-import "../../styles/Map.css";
+import "../styles/Map.css";
 
 interface MarkerData {
     id: number;

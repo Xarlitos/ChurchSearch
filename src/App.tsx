@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Libraries, useLoadScript } from "@react-google-maps/api";
-import NewMap from "./components/Map/Map";
+import NewMap from "./components/Map";
 import Buttons from "./components/Buttons";
 import AboutDialog from "./components/AboutDialog"
 import useGeocode from "./hooks/useGeocode";
