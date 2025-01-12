@@ -1,30 +1,46 @@
+/* Główna struktura strony */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  background-color: #e0e0e0; /* Tło całej strony */
+}
+
+/* Stopka górna z przyciskami */
+.top-footer {
+  display: flex;
+  flex-wrap: wrap; /* Umożliwia zawijanie przycisków na nowy rząd */
+  justify-content: center; /* Centruje przyciski w poziomie */
+  align-items: center; /* Centruje przyciski w pionie */
+  background-color: white;
+  color: black; /* Zmieniamy na czarny, żeby tekst był widoczny na białym tle */
+  padding: 10px 20px; /* Zmniejszony padding */
+  width: 100%;
+  background-color: #e0e0e0; /* Tło w stopce górnej */
+}
+
+/* Kontener mapy */
 .map-container {
-  position: relative;
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: #e0e0e0;
+  margin: 10px;
+  overflow: hidden;
+  padding: 0 0px;
+  border-radius: 20px;  /* Zaokrąglamy rogi */
+  box-sizing: border-box;
+}
+
+/* Stopka dolna */
+.bottom-footer {
+  background-color: #e0e0e0; /*Tło*/
+  color: black; /*teskt*/
+  text-align: center;
+  padding: 5px 20px;
+  font-size: 18px;
   width: 100%;
-  height: 700px;
-  background-color: #242424;
-  overflow: visible;
-  margin-top: 8%;
-}
-
-.map-container > div {
-  width: 100%; /* Szerokość mapy */
-  height: 100%; /* Wysokość mapy */
-  /*max-width: 1200px; /* Opcjonalnie maksymalna szerokość */
-  /*max-height: 800px; /* Opcjonalnie maksymalna wysokość */
-}
-
-.app-container {
-  position: relative;
-  width: 100%;   /* Zajmuje całą szerokość */
-  height: 100%; /* Wysokość aplikacji */
-}
-
-.gm-style-iw {
-  z-index: 1000 !important; /* Przysłania wszystko */
-  top: 0 !important; /* Możesz to wyregulować */
-  transform: translateY(0) !important; /* Usuwa przesunięcia */
 }

@@ -33,6 +33,5 @@ echo "Wpis hosts dodany."
 
 ./docker/ssl/gen-ssl.sh
 
-docker compose up --build
-
-echo "koniec"
+echo ""
+echo "koniec, mozesz rozpoaczac prace"
