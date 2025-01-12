@@ -72,14 +72,12 @@ kill
 - [ ] okienko z szczegółami markera ulepszyć
 
 ### Obsługa Logowania do Konta Google
-//do ustalenia
 - [ ] Implementacja logowania za pomocą **Google OAuth**.
-  - [ ] Użycie **Google Sign-In** API.
+  - [x] Użycie **Google Sign-In** API.
   - [ ] Integracja z aplikacją React do autoryzacji użytkownika.
   - [ ] Przechowywanie tokenu logowania (np. w lokalnym stanie lub w `localStorage`).
 
 ### Obsługa Dodawania Lokalizacji do Ulubionych na Koncie Google
-//do ustalenia
 - [ ] Dodanie funkcji, która pozwala użytkownikowi na:
   - [x] Kliknięcie na kościół na mapie wyświetlanej w aplikacji.
   - [ ] Dodanie lokalizacji kościoła do listy ulubionych w koncie Google.
