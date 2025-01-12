@@ -5,59 +5,42 @@
   width: 100%;
   height: 100vh;
   margin: 0;
+  background-color: #e0e0e0; /* Tło całej strony */
 }
 
 /* Stopka górna z przyciskami */
 .top-footer {
   display: flex;
-  justify-content: space-around;
-  align-items: center;
+  flex-wrap: wrap; /* Umożliwia zawijanie przycisków na nowy rząd */
+  justify-content: center; /* Centruje przyciski w poziomie */
+  align-items: center; /* Centruje przyciski w pionie */
   background-color: white;
-  color: white;
-  padding: 20px 0;
+  color: black; /* Zmieniamy na czarny, żeby tekst był widoczny na białym tle */
+  padding: 10px 20px; /* Zmniejszony padding */
   width: 100%;
+  background-color: #e0e0e0; /* Tło w stopce górnej */
 }
-
-/* Styl przycisków w stopce */
-.footer-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  background-color: #007bff;
-  color: white;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-/* Stylizacja przycisku po najechaniu myszką */
-.footer-button:hover {
-  background-color: #0056b3;
-}
-
 
 /* Kontener mapy */
 .map-container {
-  flex: 1; /* Wypełnia przestrzeń między stopkami */
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #242424;
-  border-radius: 20px; /* Zaokrąglone rogi */
-  margin: 10px; /* Przerwy między stopkami */
-  overflow: hidden; /* Ukrywa wszystko poza obszarem mapy */
-}
-
-.map-content {
-  width: 100%;
-  height: 100%;
+  background-color: #e0e0e0;
+  margin: 10px;
+  overflow: hidden;
+  padding: 0 0px;
+  border-radius: 20px;  /* Zaokrąglamy rogi */
+  box-sizing: border-box;
 }
 
 /* Stopka dolna */
 .bottom-footer {
-  background-color: white;
-  color: white;
+  background-color: #e0e0e0; /*Tło*/
+  color: black; /*teskt*/
   text-align: center;
-  padding: 5px 0;
-  font-size: 14px;
+  padding: 5px 20px;
+  font-size: 18px;
   width: 100%;
 }

@@ -61,6 +61,12 @@ add to **C:\Windows\System32\drivers\etc\hosts** line
 
 # TODO List
 
+### Błędy do poprawki
+- [ ] trzeba dwa razy kliknac clear, nie dziala na raz
+- [ ] wciecie gornej stopki z przyciskami
+- [ ] zeby te buttony sie zwijaly do kilku wierszy jesli okno przegladarki jest mniejsze, aktualnie sie zweza i tekst wychodzi za obrys
+
+
 ### Budowa Aplikacji
 - [x] Stworzenie aplikacji w React.
   - [x] Użycie **Vite** do stworzenia aplikacji.
@@ -70,15 +76,19 @@ add to **C:\Windows\System32\drivers\etc\hosts** line
   - [x] Wyświetlanie wyników wyszukiwania kościołów na mapie.
 
 ### Front-end aplikacji
-- [ ] Strona glówna:
-  - [ ] stopka z buttonami,
-  - [ ] okno z wyswietlanym mapy
-  - [ ] boczne menu: about, log in/log out
-- [ ] Okno/podstrona 'about':
-  - [ ] tytul
-  - [ ] krotki opis (jest w readme),
-  - [ ] autorzy i licencje (jest w readme).
+- [x] Strona glówna:
+  - [x] stopka z buttonami,
+  - [x] kontener mapy
+  - [x] stopka wersji
+  - [x] zastosowanie material ui
+- [x] Dialog 'about':
+  - [x] tytul
+  - [x] krotki opis (jest w readme),
+  - [x] autorzy i licencje (jest w readme).
 - [ ] okienko z szczegółami markera ulepszyć
+
+### Wyznaczanie trasy
+- [ ] jeśli nie wyjdzie logowanie do google to zrobić wyznaczanie trasy do wskazanego markera
 
 ### Obsługa Logowania do Konta Google
 - [ ] Implementacja logowania za pomocą **Google OAuth**.

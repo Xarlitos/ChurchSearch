@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Libraries, useLoadScript } from "@react-google-maps/api";
 import NewMap from "./components/Map/Map";
-import MapButtons from "./components/Map/MapButtons";
+import Buttons from "./components/Buttons";
+import AboutDialog from "./components/AboutDialog"
 import useGeocode from "./hooks/useGeocode";
 import useNearbySearch from "./hooks/useNearbySearch";
 import "./styles/App.css";
@@ -57,11 +58,15 @@ const App: React.FC = () => {
     },
   ]);
 
+  const [showAboutDialog, setShowAboutDialog] = useState<boolean>(false);
+  const [shouldLoadMarkers, setShouldLoadMarkers] = useState<boolean>(true); // Nowy stan kontrolujący załadowanie markerów
   const mapRef = useRef<google.maps.Map | null>(null);
   const { searchNearby } = useNearbySearch(mapRef.current);
   const { geocode } = useGeocode();
 
+  // Funkcja, która ładuję markery w zależności od flagi
   useEffect(() => {
+    if (!shouldLoadMarkers) return; //jesli klikniete clear nie laduj markerow znowu
     if (mapRef.current) {
       searchNearby(center, 5000)
         .then((places) => {
@@ -93,14 +98,20 @@ const App: React.FC = () => {
           { id: Date.now(), name: location, position: result },
         ]);
       }
+      setShouldLoadMarkers(true);
     } catch (error) {
       console.error(error);
     }
   };
 
+  const handleAboutClick = () => {
+    setShowAboutDialog(true); // Ustawia stan na true, aby pokazać dialog
+  };  
+
   // Czyszczenie bazy markerów
   const clearMarkers = () => {
     setMarkers([]);
+    setShouldLoadMarkers(false); // Wyłączamy ładowanie markerów po usunięciu
   };
 
   const [selectedMarker, setSelectedMarker] = useState<google.maps.Marker | null>(null);
@@ -141,7 +152,7 @@ const App: React.FC = () => {
     <div className="app-container">
       {/* Stopka z przyciskami */}
       <div className="top-footer">
-        <MapButtons onGeocode={handleGeocode} onClear={clearMarkers} />
+        <Buttons onGeocode={handleGeocode} onClear={clearMarkers} onAboutClick={handleAboutClick} />
       </div>
 
       {/* Kontener mapy */}
@@ -157,8 +168,11 @@ const App: React.FC = () => {
 
       {/* Stopka z wersją aplikacji */}
       <div className="bottom-footer">
-        <p>Church Locator: 0.4</p>
+        <p>Church Locator v0.5</p>
       </div>
+
+      {/* Dialog About */}
+      {showAboutDialog && <AboutDialog open={showAboutDialog} onClose={() => setShowAboutDialog(false)} />}
     </div>
   );
 };
