@@ -32,6 +32,7 @@ If you're using Docker Compose (works only on Linux Debian-based systems), follo
 sudo chmod +x ./install_req_app.sh
 ./install_req_app.sh
 ```
+
 2. docker run app with docker compose
 ```
 # build container and run
@@ -43,13 +44,15 @@ sudo chmod +x ./install_req_app.sh
 # kill docker container and clean storage
 ./run_app.sh -kill
 ```
+
 ### Dodaj certyfikat do zaufanych:
-    - W folderze C:\Users znajdziesz plik `rootCA.pem`.
-    - Uruchom **PowerShell** jako administrator i wykonaj komendę:
-      ```bash
-      Import-Certificate -FilePath "C:\Users\rootCA.pem" -CertStoreLocation "Cert:\LocalMachine\Root"
-      ```
-    - Następnie dodaj certyfikat w przeglądarce do zaufanych.
+  - W folderze C:\Users znajdziesz plik `rootCA.pem`.
+  - Uruchom **PowerShell** jako administrator i wykonaj komendę:
+    ```
+    Import-Certificate -FilePath "C:\Users\rootCA.pem" -CertStoreLocation "Cert:\LocalMachine\Root"
+    ```
+  - Następnie dodaj certyfikat w przeglądarce do zaufanych.
+
 ### Wpis hosts
 add to **C:\Windows\System32\drivers\etc\hosts** line 
 ```
