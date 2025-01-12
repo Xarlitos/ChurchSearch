@@ -18,39 +18,45 @@ Aplikacja umożliwia wyszukiwanie kościołów w określonym mieście za pomocą
 - **npm** – Package manager for managing JavaScript dependencies, used in conjunction with `package.json` for project configuration and scripts.
 
 # Run project
-To run the project, type and enter the following commands in the CLI:
+## To run the project, type and enter the following commands in the CLI:
 ```
 npm install
 npm run dev
 ```
 
-add to **C:\Windows\System32\drivers\etc\hosts** line 
-```
-127.0.0.1    church.local
-```
+## Running with Docker Compose (Linux Only)
 
-Or, if you're using Docker Compose:
+If you're using Docker Compose (works only on Linux Debian-based systems), follow these steps:
+1. Before running the script, install the required applications by executing
 ```
+sudo chmod +x ./install_req_app.sh
+./install_req_app.sh
+```
+2. docker run app with docker compose
+```
+# build container and run
 ./run_app.sh -run
-```
-restart
-```
+
+# kill container and build from new
 ./run_app.sh -restart
-```
-kill
-```
+
+# kill docker container and clean storage
 ./run_app.sh -kill
 ```
-**Dodaj certyfikat do zaufanych:**
+### Dodaj certyfikat do zaufanych:
     - W folderze C:\Users znajdziesz plik `rootCA.pem`.
     - Uruchom **PowerShell** jako administrator i wykonaj komendę:
       ```bash
       Import-Certificate -FilePath "C:\Users\rootCA.pem" -CertStoreLocation "Cert:\LocalMachine\Root"
       ```
     - Następnie dodaj certyfikat w przeglądarce do zaufanych.
+### Wpis hosts
+add to **C:\Windows\System32\drivers\etc\hosts** line 
+```
+127.0.0.1    church.local
+```
 
-
-## TODO List
+# TODO List
 
 ### Budowa Aplikacji
 - [x] Stworzenie aplikacji w React.

@@ -33,7 +33,7 @@ echo ""
 echo "Certificate generation and installation complete."
 
 # Kopiowanie Root CA do pulpitu Windows
-WINDOWS_DESKTOP="/mnt/c/Users/xarlo/Desktop"
+WINDOWS_DESKTOP="/mnt/c/Users"
 cp $ROOT_CA_PEM $WINDOWS_DESKTOP/rootCA.pem
 echo "Root CA skopiowany na pulpit Windows: $WINDOWS_DESKTOP/rootCA.pem"
 echo ""
