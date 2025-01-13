@@ -42,24 +42,7 @@ const App: React.FC = () => {
     const [user, setUser] = useState<UserData | null>(null);
 
     const [center, setCenter] = useState<google.maps.LatLngLiteral>({lat: 51.9194, lng: 19.1451})
-    const [markers, setMarkers] = useState<MarkerData[]>([
-        {
-            id: 1,
-            name: "Kościół A",
-            position: {lat: 51.9194, lng: 19.1451},
-            description: "Stary, zabytkowy kościół w centrum miasta.",
-            address: "Ul. Kościelna 1, Warszawa",
-            hours: "Pn-Pt: 8:00 - 18:00, Sb-Nd: 9:00 - 19:00",
-        },
-        {
-            id: 2,
-            name: "Kościół B",
-            position: {lat: 50.0614, lng: 19.9372},
-            description: "Nowoczesny kościół w południowej dzielnicy miasta.",
-            address: "Ul. Krakowska 5, Kraków",
-            hours: "Pn-Pt: 7:00 - 17:00, Sb-Nd: 8:00 - 20:00",
-        },
-    ]);
+    const [markers, setMarkers] = useState<MarkerData[]>([]);
     const [shouldFetchMarkers, setShouldFetchMarkers] = useState(false);
 
     const mapRef = useRef<google.maps.Map | null>(null); // Referencja do mapy

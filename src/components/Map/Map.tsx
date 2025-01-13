@@ -32,7 +32,6 @@ const Map: React.FC<MapProps> = ({center, markers, options, mapRef, onClickMarke
                          icon={{
                              url: marker.isFavourite
                              ?
-
                                  "/favouriteMarker.png"
                              :
                                 "/location.png",
