@@ -1,0 +1,7 @@
+# wykluczenie smieci z kontenera
+node_modules
+dist
+logs
+.git
+.vscode
+.idea
