@@ -245,8 +245,8 @@ const App: React.FC = () => {
                 (position) => {
                     const { latitude, longitude } = position.coords;
                     const userPosition = { lat: latitude, lng: longitude };
+                    console.log("Pobrano lokalizację:", userPosition); // Logowanie
 
-                    console.log("Pobrano lokalizację:", userPosition);
                     setUserPosition(userPosition);
                 },
                 (error) => {
@@ -259,12 +259,15 @@ const App: React.FC = () => {
     };
 
     useEffect(() => {
-        // Pobierz aktualną lokalizację użytkownika podczas pierwszego renderu
-        getUserLocation();
-    }, []);
+        if (isLoaded) {
+            console.log("Google Maps API załadowane!");
+            getUserLocation();  // Wywołaj geolokalizację po załadowaniu Google Maps
+        }
+    }, [isLoaded]);
 
-
-    if (!isLoaded) return <div>Loading...</div>;
+    if (!isLoaded) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div>
