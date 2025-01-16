@@ -1,7 +1,8 @@
-import React, {useEffect, useRef, useState} from "react";
-import {Libraries, useLoadScript} from "@react-google-maps/api";
-import NewMap from "./components/Map/Map.tsx";
-import MapButtons from "./components/Map/MapButtons";
+import React, { useEffect, useRef, useState } from "react";
+import { Libraries, useLoadScript } from "@react-google-maps/api";
+import NewMap from "./components/Map";
+import Buttons from "./components/Buttons";
+import AboutDialog from "./components/AboutDialog"
 import useGeocode from "./hooks/useGeocode";
 import "./styles/App.css"
 import useNearbySearch from "./hooks/useNearbySearch.ts";
@@ -24,19 +25,22 @@ interface UserData {
     avatarUrl: string;
 }
 
-const options = {
-    disableDefaultUI: true, // Wyłącza wszystkie domyślne przyciski
-    zoomControl: false,     // Wyłącza przycisk zoomowania
-    fullscreenControl: false, // Wyłącza fullscreen
-    streetViewControl: false, // Wyłącza street view
-    mapTypeControl: false, // Ukrywa przełącznik "Map/Satellite"
+const LIBRARIES: Libraries = ["places", "marker"];
+const MAP_OPTIONS: google.maps.MapOptions = {
+  disableDefaultUI: true,
+  zoomControl: false,
+  fullscreenControl: false,
+  streetViewControl: false,
+  mapTypeControl: false,
 };
 
-const LIBRARIES: Libraries = ["places", "marker"];
-
 const App: React.FC = () => {
+  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
-    const apiKey: string = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+  if (!apiKey) {
+    console.error("Google Maps API key is missing. Please set VITE_GOOGLE_MAPS_API_KEY in your .env file.");
+    return <div>Error: Missing Google Maps API Key.</div>;
+  }
 
     const [user, setUser] = useState<UserData | null>(null);
 
@@ -44,9 +48,11 @@ const App: React.FC = () => {
     const [markers, setMarkers] = useState<MarkerData[]>([]);
     const [shouldFetchMarkers, setShouldFetchMarkers] = useState(false);
 
-    const mapRef = useRef<google.maps.Map | null>(null); // Referencja do mapy
-    const {searchNearby} = useNearbySearch(mapRef.current); // Hook do Nearby Search
-    const {geocode} = useGeocode()
+  const [showAboutDialog, setShowAboutDialog] = useState<boolean>(false);
+  const [shouldLoadMarkers, setShouldLoadMarkers] = useState<boolean>(true); // Nowy stan kontrolujący załadowanie markerów
+  const mapRef = useRef<google.maps.Map | null>(null);
+  const { searchNearby } = useNearbySearch(mapRef.current);
+  const { geocode } = useGeocode();
 
     const [userPosition, setUserPosition] = useState<google.maps.LatLngLiteral | null>(null);
 
@@ -115,12 +121,18 @@ const App: React.FC = () => {
         }
     }, [shouldFetchMarkers, searchNearby, center]); // Aktualizuj, gdy zmienia się "center"
 
-    const clearMarkers = () => {
-        setMarkers([])
-        setShouldFetchMarkers(false)
-    }
+  const handleAboutClick = () => {
+    setShowAboutDialog(true); // Ustawia stan na true, aby pokazać dialog
+  };
 
-    const infoWindow = useRef<google.maps.InfoWindow | null>(null);
+  // Czyszczenie bazy markerów
+  const clearMarkers = () => {
+    setMarkers([]);
+    setShouldLoadMarkers(false); // Wyłączamy ładowanie markerów po usunięciu
+  };
+
+  const [selectedMarker, setSelectedMarker] = useState<google.maps.Marker | null>(null);
+  const infoWindow = useRef<google.maps.InfoWindow | null>(null);
 
     useEffect(() => {
         if (!isLoaded) return;
@@ -129,13 +141,12 @@ const App: React.FC = () => {
         }
     }, [isLoaded]);
 
-    const handleMarkerClick = (
-        marker: MarkerData
-    ) => {
-        if (!mapRef.current || !infoWindow.current) {
-            console.error("Map or InfoWindow is not available.");
-            return;
-        }
+  // Obsługa kliknięcia na znacznik
+  const handleMarkerClick = (marker: MarkerData) => {
+    if (!mapRef.current || !infoWindow.current) {
+      console.error("Map or InfoWindow is not available.");
+      return;
+    }
 
         const {id, name, description, position, address, hours, isFavourite} = marker;
         const content = user
@@ -269,27 +280,46 @@ const App: React.FC = () => {
         return <div>Loading...</div>;
     }
 
-    return (
-        <div>
-            <div className="map-container">
-                <MapButtons onGeocode={handleGeocode} onClear={clearMarkers}/>
-                <NewMap center={center} markers={markers} options={options} userPosition={userPosition} mapRef={(map) => (mapRef.current = map)}
-                        onClickMarker={(marker) => handleMarkerClick(marker)}/>
-            </div>
-            <div className={"google-login-container"}>
-                {!user ? (
-                    <GoogleLogin onSuccess={handleSuccess} onError={handleError} useOneTap
-                    />
-                ) : (
-                    <UserInfo
-                        name={user.name}
-                        avatarUrl={user.avatarUrl}
-                        onLogout={handleLogout}
-                    />
-                )}
-            </div>
-        </div>
-    )
-}
+  return (
+    <div className="app-container">
+      {/* Stopka z przyciskami */}
+      <div className="top-footer">
+        <Buttons onGeocode={handleGeocode} onClear={clearMarkers} onAboutClick={handleAboutClick} />
+          <div className={"google-login-container"}>
+              {!user ? (
+                  <GoogleLogin onSuccess={handleSuccess} onError={handleError} useOneTap
+                  />
+              ) : (
+                  <UserInfo
+                      name={user.name}
+                      avatarUrl={user.avatarUrl}
+                      onLogout={handleLogout}
+                  />
+              )}
+          </div>
+      </div>
 
-export default App
+      {/* Kontener mapy */}
+      <div className="map-container">
+        <NewMap
+          center={center}
+          markers={markers}
+          options={MAP_OPTIONS}
+          userPosition={userPosition}
+          mapRef={(map) => (mapRef.current = map)}
+          onClickMarker={(marker) => handleMarkerClick(marker)}
+        />
+      </div>
+
+      {/* Stopka z wersją aplikacji */}
+      <div className="bottom-footer">
+        <p>Church Locator v0.5</p>
+      </div>
+
+      {/* Dialog About */}
+      {showAboutDialog && <AboutDialog open={showAboutDialog} onClose={() => setShowAboutDialog(false)} />}
+    </div>
+  );
+};
+
+export default App;
