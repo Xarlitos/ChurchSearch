@@ -12,9 +12,10 @@ interface ButtonsProps {
   onGeocode: (location: string) => Promise<void>; // Klikanie przycisku "Search"
   onClear: () => void; // Klikanie przycisku "Clear"
   onAboutClick: () => void;  // Klikanie przycisku "About"
+  onNavigate: () => void;  // Klikanie przycisku "Navigate"
 }
 
-const Buttons = ({ onGeocode, onClear, onAboutClick }: ButtonsProps) => {
+const Buttons = ({ onGeocode, onClear, onAboutClick, onNavigate }: ButtonsProps) => {
   const [location, setLocation] = useState<string>("");
 
   // Funkcja obsługująca naciśnięcie klawisza Enter
@@ -27,13 +28,12 @@ const Buttons = ({ onGeocode, onClear, onAboutClick }: ButtonsProps) => {
   return (
     <Box
       display="flex"
-      justifyContent="flex-start" // Centrujemy w pionie
-      alignItems="center" // Ustawiamy przyciski do lewej
+      justifyContent="flex-start"
+      alignItems="center"
       gap={2}
       width="100%"
-      sx={{ padding: '0 10px' }} // Padding do kontenera przycisków
+      sx={{ padding: '0 10px', flexWrap: 'wrap' }} // Dodano wrap, żeby lepiej działało na mniejszych ekranach
     >
-
       {/* Pole tekstowe */}
       <TextField
         variant="outlined"
@@ -60,8 +60,8 @@ const Buttons = ({ onGeocode, onClear, onAboutClick }: ButtonsProps) => {
       <Fab
         variant="extended"
         size="medium"
-        color="primary"
-        onClick={() => console.log("Navigate clicked")}
+        color="primary"  // Kolor nawigacji może być bardziej wyróżniający się
+        onClick={onNavigate}
         sx={{ marginBottom: '10px' }}
       >
         <NavigationIcon sx={{ mr: 1 }} />
@@ -72,7 +72,7 @@ const Buttons = ({ onGeocode, onClear, onAboutClick }: ButtonsProps) => {
       <Fab
         variant="extended"
         size="medium"
-        color="default"
+        color="primary"
         onClick={onClear}
         sx={{ marginBottom: '10px' }}
       >
@@ -84,7 +84,7 @@ const Buttons = ({ onGeocode, onClear, onAboutClick }: ButtonsProps) => {
       <Fab
         variant="extended"
         size="medium"
-        color="default"
+        color="primary"
         onClick={onAboutClick}
         sx={{ marginBottom: '10px' }}
       >
