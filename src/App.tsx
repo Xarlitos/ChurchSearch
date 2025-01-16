@@ -5,8 +5,7 @@ import MapButtons from "./components/Map/MapButtons";
 import useGeocode from "./hooks/useGeocode";
 import "./styles/App.css"
 import useNearbySearch from "./hooks/useNearbySearch.ts";
-import GoogleLoginButton from "./components/GoogleLoginButton.tsx";
-import {CredentialResponse} from "@react-oauth/google";
+import {CredentialResponse, GoogleLogin} from "@react-oauth/google";
 import UserInfo from "./components/UserInfo.tsx";
 
 interface MarkerData {
@@ -48,6 +47,8 @@ const App: React.FC = () => {
     const mapRef = useRef<google.maps.Map | null>(null); // Referencja do mapy
     const {searchNearby} = useNearbySearch(mapRef.current); // Hook do Nearby Search
     const {geocode} = useGeocode()
+
+    const [userPosition, setUserPosition] = useState<google.maps.LatLngLiteral | null>(null);
 
     const {isLoaded} = useLoadScript({
         googleMapsApiKey: apiKey,
@@ -238,18 +239,44 @@ const App: React.FC = () => {
         setUser(null);
     };
 
+    const getUserLocation = () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    const userPosition = { lat: latitude, lng: longitude };
+
+                    console.log("Pobrano lokalizację:", userPosition);
+                    setUserPosition(userPosition);
+                },
+                (error) => {
+                    console.error("Nie można pobrać lokalizacji:", error);
+                }
+            );
+        } else {
+            console.error("Geolokacja nie jest wspierana przez tę przeglądarkę.");
+        }
+    };
+
+    useEffect(() => {
+        // Pobierz aktualną lokalizację użytkownika podczas pierwszego renderu
+        getUserLocation();
+    }, []);
+
+
     if (!isLoaded) return <div>Loading...</div>;
 
     return (
         <div>
             <div className="map-container">
                 <MapButtons onGeocode={handleGeocode} onClear={clearMarkers}/>
-                <NewMap center={center} markers={markers} options={options} mapRef={(map) => (mapRef.current = map)}
+                <NewMap center={center} markers={markers} options={options} userPosition={userPosition} mapRef={(map) => (mapRef.current = map)}
                         onClickMarker={(marker) => handleMarkerClick(marker)}/>
             </div>
             <div className={"google-login-container"}>
                 {!user ? (
-                    <GoogleLoginButton onSuccess={handleSuccess} onError={handleError}/>
+                    <GoogleLogin onSuccess={handleSuccess} onError={handleError} useOneTap
+                    />
                 ) : (
                     <UserInfo
                         name={user.name}
