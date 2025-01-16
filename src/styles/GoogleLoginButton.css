@@ -1,0 +1,22 @@
+.custom-google-button {
+    display: inline-flex;
+    width: 100%;
+    max-width: 300px;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #4285F4;
+    color: #fff;
+    cursor: pointer;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+.custom-google-button:hover {
+    background-color: #357ae8;
+}
+
+.custom-google-button:active {
+    background-color: #2c69d3;
+}

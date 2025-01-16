@@ -44,3 +44,9 @@
   font-size: 18px;
   width: 100%;
 }
+
+.google-login-container {
+  position: absolute;
+  left: 82%;
+  top: 30px; /* Odstęp od górnej krawędzi */
+}

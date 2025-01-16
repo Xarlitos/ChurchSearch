@@ -7,5 +7,6 @@
   "compilerOptions": {
     "strict": true,
     "jsx": "react-jsx",
+    "types": ["google.maps"]
   }
 }
