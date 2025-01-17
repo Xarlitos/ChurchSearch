@@ -1,5 +1,6 @@
 import React from "react";
-import "../styles/UserInfo.css"
+import { Avatar, Button, Typography, Box } from "@mui/material";
+import "../styles/UserInfo.css";
 
 interface UserInfoProps {
     name: string;
@@ -7,17 +8,19 @@ interface UserInfoProps {
     onLogout: () => void;
 }
 
-const UserInfo: React.FC<UserInfoProps> = ({ name, onLogout }) => {
-    const sampleAvatarUrl = "/avatar.png"; // Przykładowy link do obrazka
-
+const UserInfo: React.FC<UserInfoProps> = ({ name, avatarUrl, onLogout }) => {
     return (
-        <div className="user-info">
-            <img src={sampleAvatarUrl} alt={`${name}'s avatar`} className="user-avatar" />
-            <p className="user-name">Welcome, {name}</p>
-            <button onClick={onLogout} className="logout-button">
+        <Box display="flex" alignItems="center" justifyContent="space-between" className="user-info">
+            <Box display="flex" alignItems="center">
+                <Avatar src={avatarUrl} alt={`${name}'s avatar`} className="user-avatar" />
+                <Typography variant="h6" component="p" className="user-name" marginLeft={2}>
+                    Welcome, {name}
+                </Typography>
+            </Box>
+            <Button variant="outlined" onClick={onLogout} className="logout-button">
                 Logout
-            </button>
-        </div>
+            </Button>
+        </Box>
     );
 };
 
