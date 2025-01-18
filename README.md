@@ -18,13 +18,26 @@ Aplikacja umożliwia wyszukiwanie kościołów w określonym mieście za pomocą
 - **npm** – Package manager for managing JavaScript dependencies, used in conjunction with `package.json` for project configuration and scripts.
 
 # Run project
-## To run the project, type and enter the following commands in the CLI:
+## ENV
+ - Generating your API key and paste in '.env.example'
+```
+# key Google Maps API
+VITE_GOOGLE_MAPS_API_KEY=your-google-api-key-here
+
+# key google Oauth
+VITE_GOOGLE_CLIENT_ID=your-google-cloud-key-here
+
+VITE_AUTORZY="Author Names Here"
+```
+ - change file name from '.env.example' to '.env'
+
+## local:
 ```
 npm install
 npm run dev
 ```
 
-## Running with Docker Compose (Linux Only)
+## Running with Docker Compose (WSL/Linux/MacOS Only)
 
 If you're using Docker Compose (works only on Linux Debian-based systems), follow these steps:
 1. Before running the script, install the required applications by executing

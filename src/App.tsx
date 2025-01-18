@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Typography } from '@mui/material';
 import { Libraries, useLoadScript } from "@react-google-maps/api";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import NewMap from "./components/Map";
@@ -270,6 +271,7 @@ const App: React.FC = () => {
   const handleMyLocation = () => {
     if (mapRef.current && userPosition) {
       setCenter(userPosition); // Update the center of the map to user's location
+      mapRef.current.setZoom(18);
     } else {
       console.error("User location is not available");
     }
@@ -311,7 +313,9 @@ const App: React.FC = () => {
       </div>
   
       <div className="bottom-footer">
-        <p>Church Locator v0.9</p>
+        <Typography variant="body2" color="textSecondary" align="center">
+          Church Locator v0.9
+        </Typography>
       </div>
   
       {showAboutDialog && <AboutDialog open={showAboutDialog} onClose={() => setShowAboutDialog(false)} />}
