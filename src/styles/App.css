@@ -5,38 +5,62 @@
   width: 100%;
   height: 100vh;
   margin: 0;
-  background-color: #e0e0e0; /* Tło całej strony */
+  background-color: #e0e0e0; /* Tło w trybie jasnym */
+  transition: background-color 0.3s ease; /* Płynna zmiana tła */
+}
+
+/* Tryb ciemny */
+.app-container.dark {
+  background-color: #121212; /* Tło w trybie ciemnym */
 }
 
 /* Ustawienie górnej sekcji z przyciskami oraz Google obok niej */
 .top-footer-container {
-  display: flex; /* Używamy flex do ustawienia obok siebie */
-  justify-content: space-between; /* Rozdzielenie elementów */
-  align-items: center; /* Ustawienie w pionie na tej samej wysokości */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   width: 100%;
-  height: 80px; /* Ustawienie wspólnej wysokości */
+  height: 80px;
+  transition: background-color 0.3s ease;
+}
+
+/* Tryb ciemny dla top-footer-container */
+.app-container.dark .top-footer-container {
+  background-color: #121212; /* Ciemniejsze tło */
 }
 
 /* Stopka górna z przyciskami */
 .top-footer {
-  display: flex; /* Używamy flex w stopce górnej */
-  justify-content: space-between; /* Ustawienie elementów w przestrzeni */
-  align-items: center; /* Wyrównanie w pionie */
-  background-color: #e0e0e0; /* Tło w stopce górnej */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #e0e0e0; /* Tło w trybie jasnym */
   padding: 10px 20px;
-  width: 80%; /* 80% szerokości dla top-footer */
-  height: 100%; /* Wysokość ustawiona na 100% */
+  width: 80%;
+  height: 100%;
+  transition: background-color 0.3s ease;
+}
+
+/* Tryb ciemny dla top-footer */
+.app-container.dark .top-footer {
+  background-color: #121212; /* Ciemniejsze tło */
 }
 
 /* Kontener logowania Google obok stopki górnej */
 .google-login-container {
   display: flex;
-  justify-content: center; /* Wyśrodkowanie w poziomie */
-  align-items: center; /* Wyśrodkowanie w pionie */
-  background-color: #e0e0e0;
+  justify-content: center;
+  align-items: center;
+  background-color: #e0e0e0; /* Tło w trybie jasnym */
   padding: 10px;
-  width: 20%; /* Google zajmuje 20% szerokości */
-  height: 100%; /* Wysokość ustawiona na 100% */
+  width: 20%;
+  height: 100%;
+  transition: background-color 0.3s ease;
+}
+
+/* Tryb ciemny dla google-login-container */
+.app-container.dark .google-login-container {
+  background-color: #121212; /* Ciemniejsze tło */
 }
 
 /* Kontener mapy */
@@ -45,20 +69,33 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #e0e0e0;
+  background-color: #e0e0e0; /* Tło w trybie jasnym */
   margin: 10px;
   overflow: hidden;
   padding: 0 0px;
-  border-radius: 20px;  /* Zaokrąglamy rogi */
+  border-radius: 20px;
   box-sizing: border-box;
+  transition: background-color 0.3s ease;
+}
+
+/* Tryb ciemny dla map-container */
+.app-container.dark .map-container {
+  background-color: #121212; /* Ciemniejsze tło */
 }
 
 /* Stopka dolna */
 .bottom-footer {
-  background-color: #e0e0e0; /* Tło */
-  color: black; /* Tekst */
+  background-color: #e0e0e0; /* Tło w trybie jasnym */
+  color: black; /* Tekst w trybie jasnym */
   text-align: center;
   padding: 5px 20px;
   font-size: 18px;
   width: 100%;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Tryb ciemny dla bottom-footer */
+.app-container.dark .bottom-footer {
+  background-color: #121212; /* Ciemniejsze tło */
+  color: white; /* Biały tekst w trybie ciemnym */
 }

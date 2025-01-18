@@ -5,17 +5,14 @@ Aplikacja umożliwia wyszukiwanie kościołów w określonym mieście za pomocą
 # Used Technologies
 
 - **React** – A JavaScript library used for building user interfaces, especially for single-page applications (SPA). It enables the creation of dynamic and interactive web pages.
-- **Docker and Docker Compose** – Used for containerizing the application, ensuring easy deployment and scalability across different environments.
-- **Git** – Version control system used for managing the source code and collaboration within the team.
-- **TypeScript** – A superset of JavaScript that provides static typing, enabling better tooling and easier debugging.
-- **ESLint** – A static code analysis tool used to identify and fix problems in JavaScript and TypeScript code, ensuring code quality and consistency.
 - **Vite** – A build tool for JavaScript applications that provides fast compilation and Hot Module Replacement (HMR) for development.
-- **HTML** – The standard markup language used to structure the web pages.
-- **Nginx** – A web server and reverse proxy used to serve the application and handle HTTPS traffic in production environments.
-- **SSL (SSL certificates)** – Ensures secure communication through HTTPS, especially in production environments, by encrypting data in transit.
-- **WSL2** – Windows Subsystem for Linux 2, used for running Linux-based applications and tools on Windows, improving development workflow with Linux environments.
+- **TypeScript** – A superset of JavaScript that provides static typing, enabling better tooling and easier debugging.
 - **Google API** – Various Google services, such as the Google Maps API or others, used to integrate Google features into the application.
-- **npm** – Package manager for managing JavaScript dependencies, used in conjunction with `package.json` for project configuration and scripts.
+- **Docker Compose** – Used for containerizing the application, ensuring easy deployment and scalability across different environments.
+- **Git** – Version control system used for managing the source code and collaboration within the team.
+- **Nginx** – A web server and reverse proxy used to serve the application and handle HTTPS traffic in production environments.
+- **OpenSSL** – Ensures secure communication through HTTPS, especially in production environments, by encrypting data in transit.
+- **WSL2** – Windows Subsystem for Linux 2, used for running Linux-based applications and tools on Windows, improving development workflow with Linux environments.
 
 # Run project
 ## ENV
@@ -106,14 +103,18 @@ add to **C:\Windows\System32\drivers\etc\hosts** line
 ### Front-end aplikacji
 - [x] Strona glówna:
   - [x] stopka z buttonami,
-  - [x] kontener mapy
-  - [x] stopka wersji
+  - [x] kontener mapy,
+  - [x] stopka wersji,
   - [x] zastosowanie material ui
+  - [x] tryb dzien/noc
 - [x] Dialog 'about':
-  - [x] tytul
-  - [x] krotki opis (jest w readme),
-  - [x] autorzy i licencje (jest w readme).
+  - [x] tytul,
+  - [x] krotki opis, uzyte technologie,
+  - [x] autorzy i licencja,
+  - [x] github button.
 - [x] okienko z szczegółami markera ulepszyć
+  - [x] wyznaczanie trasy do markera
+  - [x] dodanie markera do polubionych lokalnie
 
 ### Wyznaczanie trasy
 - [x] jeśli nie wyjdzie logowanie do google to zrobić wyznaczanie trasy do wskazanego markera

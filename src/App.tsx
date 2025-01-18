@@ -48,10 +48,16 @@ const App: React.FC = () => {
     const {searchNearby} = useNearbySearch(mapRef.current);
     const {geocode} = useGeocode();
     const {markers, addMarker, clearMarkers, toggleFavourite, loadFavorites} = useMarkers();
+    const [darkMode, setDarkMode] = useState(false);
     const {isLoaded} = useLoadScript({
         googleMapsApiKey: apiKey,
         libraries: LIBRARIES,
     });
+
+    // dark mode app
+    const toggleDarkMode = () => {
+      setDarkMode(prev => !prev);
+    };
 
     // Handle geocoding and placing markers on the map
     const handleGeocode = async (location: string) => {
@@ -282,7 +288,7 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="app-container">
+    <div className={`app-container ${darkMode ? 'dark' : ''}`}>
       <div className="top-footer-container">
         <div className="top-footer">
           <Buttons 
@@ -291,6 +297,8 @@ const App: React.FC = () => {
             onNavigate={handleNavigate} 
             onAboutClick={handleAboutClick} 
             onMyLocation={handleMyLocation}
+            darkMode={darkMode}
+            setDarkMode={setDarkMode}
           />
         </div>
         <div className="google-login-container">
@@ -309,18 +317,33 @@ const App: React.FC = () => {
           userPosition={userPosition}
           mapRef={(map) => (mapRef.current = map)}
           onClickMarker={handleMarkerClick}
+          darkMode={darkMode}  // Dodanie darkMode jako prop
         />
       </div>
+
   
       <div className="bottom-footer">
-        <Typography variant="body2" color="textSecondary" align="center">
-          Church Locator v0.9
+          <Typography 
+            variant="body2" 
+            color={darkMode ? "white" : "textSecondary"} 
+            align="center"
+          >
+          Church Locator v0.9.1
         </Typography>
       </div>
   
-      {showAboutDialog && <AboutDialog open={showAboutDialog} onClose={() => setShowAboutDialog(false)} />}
+       {/* Przekazanie darkMode do AboutDialog */}
+      {showAboutDialog && (
+        <AboutDialog 
+          open={showAboutDialog} 
+          onClose={() => setShowAboutDialog(false)} 
+          darkMode={darkMode}  // Przekazanie darkMode do AboutDialog
+        />
+      )}
     </div>
   );
+  
+  
 };
 
 export default App;
