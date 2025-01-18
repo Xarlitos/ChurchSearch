@@ -45,6 +45,21 @@ sudo chmod +x ./install_req_app.sh
 ./run_app.sh -kill
 ```
 
+### on MacOS
+1. Install colima vm.
+```
+#run colima vm with 4 threads and 8 gb ram
+colima start --cpu 4 --memory 8
+
+#run docker
+./run_app.sh -run
+
+#and others command from above
+
+#kill colima
+colima stop
+```
+
 ### Dodaj certyfikat do zaufanych:
   - W folderze C:\Users znajdziesz plik `rootCA.pem`.
   - Uruchom **PowerShell** jako administrator i wykonaj komendę:
@@ -62,7 +77,7 @@ add to **C:\Windows\System32\drivers\etc\hosts** line
 # TODO List
 
 ### Błędy do poprawki
-- [ ] trzeba dwa razy kliknac clear, nie dziala na raz
+- [x] trzeba dwa razy kliknac clear, nie dziala na raz
 - [ ] wciecie gornej stopki z przyciskami
 - [ ] zeby te buttony sie zwijaly do kilku wierszy jesli okno przegladarki jest mniejsze, aktualnie sie zweza i tekst wychodzi za obrys
 

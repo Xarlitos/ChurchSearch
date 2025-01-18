@@ -1,5 +1,6 @@
 # Ignoring all SSL certificate files
 docker/ssl/*
+docker/ssl.backup/
 
 # Exceptions for specific SSL configuration files
 !docker/ssl/v3.ext

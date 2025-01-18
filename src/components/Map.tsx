@@ -9,7 +9,6 @@ interface MarkerData {
     description?: string;
     address?: string;
     postalCode?: string;
-    hours?: string;
     isFavourite?: boolean;
 }
 
@@ -57,7 +56,7 @@ const Map: React.FC<MapProps> = ({center, markers, options, userPosition, mapRef
                     position={userPosition}
                     icon={{
                         url: "dot.png", // Ikona dla pozycji użytkownika
-                        scaledSize: new google.maps.Size(40, 40),
+                        scaledSize: new google.maps.Size(15, 15),
                     }}
                 />
             )}

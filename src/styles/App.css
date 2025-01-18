@@ -12,13 +12,11 @@
 .top-footer {
   display: flex;
   flex-wrap: wrap; /* Umożliwia zawijanie przycisków na nowy rząd */
-  justify-content: center; /* Centruje przyciski w poziomie */
+  justify-content: space-between; /* Ustawienie elementów w przestrzeni */
   align-items: center; /* Centruje przyciski w pionie */
-  background-color: white;
-  color: black; /* Zmieniamy na czarny, żeby tekst był widoczny na białym tle */
+  background-color: #e0e0e0; /* Tło w stopce górnej */
   padding: 10px 20px; /* Zmniejszony padding */
   width: 100%;
-  background-color: #e0e0e0; /* Tło w stopce górnej */
 }
 
 /* Kontener mapy */
@@ -37,8 +35,8 @@
 
 /* Stopka dolna */
 .bottom-footer {
-  background-color: #e0e0e0; /*Tło*/
-  color: black; /*teskt*/
+  background-color: #e0e0e0; /* Tło */
+  color: black; /* Tekst */
   text-align: center;
   padding: 5px 20px;
   font-size: 18px;
@@ -46,7 +44,5 @@
 }
 
 .google-login-container {
-  position: absolute;
-  left: 82%;
-  top: 30px; /* Odstęp od górnej krawędzi */
+  margin-left: auto; /* Ustawienie przycisku na prawą stronę */
 }
