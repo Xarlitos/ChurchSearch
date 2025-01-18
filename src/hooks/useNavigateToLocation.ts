@@ -1,3 +1,4 @@
+/*
 import { useState, useEffect } from "react";
 
 const useNavigateToLocation = (map: google.maps.Map | null, isLoaded: boolean) => {
@@ -48,3 +49,4 @@ const useNavigateToLocation = (map: google.maps.Map | null, isLoaded: boolean) =
 };
 
 export default useNavigateToLocation;
+*/

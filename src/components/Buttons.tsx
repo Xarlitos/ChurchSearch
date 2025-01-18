@@ -13,7 +13,7 @@ interface ButtonsProps {
   onGeocode: (location: string) => Promise<void>;
   onClear: () => void;
   onAboutClick: () => void;
-  onNavigate: () => void;
+  onNavigate: (location: string) => void;
   onMyLocation: () => void;
 }
 
@@ -68,7 +68,7 @@ const Buttons = ({
         variant="extended"
         size="medium"
         color="primary"
-        onClick={onNavigate}
+        onClick={ () => onNavigate(location)}
         sx={{ marginBottom: "10px" }}
       >
         <NavigationIcon sx={{ mr: 1 }} />
