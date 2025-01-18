@@ -39,6 +39,7 @@ const App: React.FC = () => {
     return <div>Error: Missing Google OAuth Client ID.</div>;
   }
 
+  const [directionsRenderer, setDirectionsRenderer] = useState<google.maps.DirectionsRenderer | null>(null);
   const [user, setUser] = useState<UserData | null>(null);
   const [center, setCenter] = useState<google.maps.LatLngLiteral>({ lat: 51.9194, lng: 19.1451 });
   const [showAboutDialog, setShowAboutDialog] = useState<boolean>(false);
@@ -113,24 +114,39 @@ const App: React.FC = () => {
   const handleMarkerClick = (marker: any) => {
     if (!mapRef.current) return;
 
-    const { id, name, description, position, address, hours, isFavourite } = marker;
+    const { id, name, position, address, isFavourite } = marker;
     const content = user
-      ? `<div>
-            <h3>${name}</h3>
-            <p>${description}</p>
-            <p><strong>Address:</strong> ${address}</p>
-            <p><strong>Hours:</strong> ${hours}</p>
-            <button id="toggle-favourite-${id}" style="background-color: transparent">
-              <img src="${isFavourite ? "favourite.png" : "notFavourite.png"}" alt="Heart icon" width="24" height="24"/>
+        ? `<div style="font-family: Arial, sans-serif; max-width: 300px; padding: 10px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+              <h3 style="margin: 0; font-size: 1.2em; line-height: 1.2;">${name}</h3>
+              <button id="toggle-favourite-${id}" 
+                  style="display: flex; align-items: center; justify-content: center; padding: 4px; border: none; background: none; cursor: pointer;">
+                  <img src="${isFavourite ? "favourite.png" : "notFavourite.png"}" alt="Heart icon" style="width: 20px; height: 20px;" />
+              </button>
+          </div>
+          <p style="margin: 4px 0;"><strong>Coordinates:</strong> ${position.lat.toFixed(6)}, ${position.lng.toFixed(6)}</p>
+          <p style="margin: 4px 0;"><strong>Address:</strong> ${address}</p>
+          <div style="display: flex; gap: 8px; margin-top: 8px;">
+            <button id="set-route-${id}" 
+                style="display: flex; align-items: center; gap: 4px; padding: 8px; border: none; background: #1976d2; color: white; border-radius: 4px; cursor: pointer;">
+                <img src="route.png" alt="route image" style="width: 20px; height: 20px;" />
+                <span>Set Route</span>
             </button>
-          </div>`
-      : `<div>
-            <h3>${name}</h3>
-            <p>${description}</p>
-            <p><strong>Address:</strong> ${address}</p>
-            <p><strong>Hours:</strong> ${hours}</p>
-            <p style="color: red;">Log in to add to favourites.</p>
-          </div>`;
+          </div>
+      </div>`
+        : `<div style="font-family: Arial, sans-serif; max-width: 300px; padding: 10px;">
+          <h3 style="margin: 0; font-size: 1.2em; line-height: 1.2;">${name}</h3>
+          <p style="margin: 4px 0;"><strong>Coordinates:</strong> ${position.lat.toFixed(6)}, ${position.lng.toFixed(6)}</p>
+          <p style="margin: 4px 0;"><strong>Address:</strong> ${address}</p>
+          <p style="margin: 4px 0; color: red;">Log in to add to favourites.</p>
+          <div style="display: flex; gap: 8px; margin-top: 8px;">
+            <button id="set-route-${id}" 
+                style="display: flex; align-items: center; gap: 4px; padding: 8px; border: none; background: #1976d2; color: white; border-radius: 4px; cursor: pointer;">
+                <img src="route.png" alt="route image" style="width: 20px; height: 20px;" />
+                <span>Set Route</span>
+            </button>
+          </div>
+      </div>`;
 
     const infoWindow = new google.maps.InfoWindow({
       content,
@@ -144,7 +160,47 @@ const App: React.FC = () => {
       if (button) {
         button.addEventListener("click", () => toggleFavourite(marker));
       }
-    });
+    })
+
+      google.maps.event.addListenerOnce(infoWindow, "domready", () => {
+        const button = document.getElementById(`set-route-${id}`);
+        if (button) {
+          button.addEventListener("click", () => setRoute(position));
+        }
+      });
+  };
+
+  const setRoute = (destination: google.maps.LatLngLiteral) => {
+      if (!mapRef.current || !userPosition) {
+        console.error("Map or user position is not available.");
+        return;
+      }
+
+      // Jeśli istnieje aktywna trasa, usuń ją
+      if (directionsRenderer) {
+          directionsRenderer.setMap(null); // Usuń poprzednią trasę z mapy
+      }
+
+      const newDirectionsRenderer = new google.maps.DirectionsRenderer();
+      const directionsService = new google.maps.DirectionsService();
+
+      newDirectionsRenderer.setMap(mapRef.current);
+      setDirectionsRenderer(newDirectionsRenderer);
+
+      directionsService.route(
+          {
+              origin: userPosition,
+              destination,
+              travelMode: google.maps.TravelMode.DRIVING,
+          },
+          (result, status) => {
+              if (status === google.maps.DirectionsStatus.OK) {
+                  newDirectionsRenderer.setDirections(result);
+              } else {
+                  console.error(`Directions request failed due to ${status}`);
+              }
+          }
+      );
   };
 
   // Handle Google login success
@@ -169,18 +225,23 @@ const App: React.FC = () => {
   };
 
   // Fetch user location on mount
-  const { userPosition, fetchUserLocation } = useUserLocation();
-  useEffect(() => {
-    if (isLoaded) {
-      fetchUserLocation();
-    }
-  }, [isLoaded]);
+  const {userPosition, fetchUserLocation} = useUserLocation();
+      useEffect(() => {
+        if (isLoaded) {
+          fetchUserLocation();
+        }
+  }, [fetchUserLocation, isLoaded]);
 
   // Clear all markers
   const handleClearMarkers = () => {
     clearMarkers();
     setShouldFetchMarkers(false);
+    clearRoutes()
   };
+
+  const clearRoutes = () => {
+      directionsRenderer?.setMap(null);
+  }
 
   // Handle navigation to the user's current location
   const handleNavigate = () => {
@@ -199,11 +260,11 @@ const App: React.FC = () => {
   return (
     <div className="app-container">
       <div className="top-footer">
-        <Buttons 
-          onGeocode={handleGeocode} 
-          onClear={handleClearMarkers} 
-          onNavigate={handleNavigate} 
-          onAboutClick={handleAboutClick} 
+        <Buttons
+          onGeocode={handleGeocode}
+          onClear={handleClearMarkers}
+          onNavigate={handleNavigate}
+          onAboutClick={handleAboutClick}
         />
         <div className="google-login-container">
           {!user ? (

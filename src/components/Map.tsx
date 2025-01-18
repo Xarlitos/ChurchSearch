@@ -9,7 +9,6 @@ interface MarkerData {
     description?: string;
     address?: string;
     postalCode?: string;
-    hours?: string;
     isFavourite?: boolean;
 }
 
