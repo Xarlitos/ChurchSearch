@@ -113,39 +113,44 @@ const App: React.FC = () => {
     const handleMarkerClick = (marker: any) => {
         if (!mapRef.current) return;
 
-        const {id, name, position, address, isFavourite} = marker;
+        const { id, name, position, address, isFavourite } = marker;
+        const buttonStyle = `
+        display: flex; align-items: center; gap: 4px; padding: 8px; 
+        border: none; color: white; border-radius: 4px; cursor: pointer;
+        width: 150px;
+    `;
+
         const content = user
             ? `<div style="font-family: Arial, sans-serif; max-width: 300px; padding: 10px;">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-              <h3 style="margin: 0; font-size: 1.2em; line-height: 1.2;">${name}</h3>
-              <button id="toggle-favourite-${id}" 
-                  style="display: flex; align-items: center; justify-content: center; padding: 4px; border: none; background: none; cursor: pointer;">
-                  <img src="${isFavourite ? "favourite.png" : "notFavourite.png"}" alt="Heart icon" style="width: 20px; height: 20px;" />
-              </button>
-          </div>
-          <p style="margin: 4px 0;"><strong>Coordinates:</strong> ${position.lat.toFixed(6)}, ${position.lng.toFixed(6)}</p>
-          <p style="margin: 4px 0;"><strong>Address:</strong> ${address}</p>
-          <div style="display: flex; gap: 8px; margin-top: 8px;">
-            <button id="set-route-${id}" 
-                style="display: flex; align-items: center; gap: 4px; padding: 8px; border: none; background: #1976d2; color: white; border-radius: 4px; cursor: pointer;">
-                <img src="route.png" alt="route image" style="width: 20px; height: 20px;" />
-                <span>Set Route</span>
-            </button>
-          </div>
-      </div>`
+              <h3 style="margin: 0; font-size: 1.2em;">${name}</h3>
+              <p><strong>Coordinates:</strong> ${position.lat.toFixed(6)}, ${position.lng.toFixed(6)}</p>
+              <p><strong>Address:</strong> ${address}</p>
+              <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+                <button id="set-route-${id}" 
+                    style="${buttonStyle} background: #1976d2;">
+                    <img src="route.png" alt="route image" style="width: 20px; height: 20px;" />
+                    <span>Set Route</span>
+                </button>
+                <button id="toggle-favourite-${id}" 
+                    style="${buttonStyle} background: #d32f2f;">
+                    <img src="${isFavourite ? "favourite.png" : "notFavourite.png"}" alt="Heart icon" style="width: 20px; height: 20px;" />
+                    <span>${isFavourite ? "Remove favourite" : "Add favourite"}</span>
+                </button>
+              </div>
+          </div>`
             : `<div style="font-family: Arial, sans-serif; max-width: 300px; padding: 10px;">
-          <h3 style="margin: 0; font-size: 1.2em; line-height: 1.2;">${name}</h3>
-          <p style="margin: 4px 0;"><strong>Coordinates:</strong> ${position.lat.toFixed(6)}, ${position.lng.toFixed(6)}</p>
-          <p style="margin: 4px 0;"><strong>Address:</strong> ${address}</p>
-          <p style="margin: 4px 0; color: red;">Log in to add to favourites.</p>
-          <div style="display: flex; gap: 8px; margin-top: 8px;">
-            <button id="set-route-${id}" 
-                style="display: flex; align-items: center; gap: 4px; padding: 8px; border: none; background: #1976d2; color: white; border-radius: 4px; cursor: pointer;">
-                <img src="route.png" alt="route image" style="width: 20px; height: 20px;" />
-                <span>Set Route</span>
-            </button>
-          </div>
-      </div>`;
+              <h3 style="margin: 0; font-size: 1.2em;">${name}</h3>
+              <p><strong>Coordinates:</strong> ${position.lat.toFixed(6)}, ${position.lng.toFixed(6)}</p>
+              <p><strong>Address:</strong> ${address}</p>
+              <p style="color: red;">Log in to add to favourites.</p>
+              <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+                <button id="set-route-${id}" 
+                    style="${buttonStyle} background: #1976d2;">
+                    <img src="route.png" alt="route image" style="width: 20px; height: 20px;" />
+                    <span>Set Route</span>
+                </button>
+              </div>
+          </div>`;
 
         const infoWindow = new google.maps.InfoWindow({
             content,
