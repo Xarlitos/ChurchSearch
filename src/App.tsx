@@ -4,7 +4,7 @@ import NewMap from "./components/Map";
 import Buttons from "./components/Buttons";
 import AboutDialog from "./components/AboutDialog";
 import useGeocode from "./hooks/useGeocode";
-import useNavigateToLocation from "./hooks/useNavigateToLocation"; // Zaimportuj hook
+import useNavigateToLocation from "./hooks/useNavigateToLocation";
 import useNearbySearch from "./hooks/useNearbySearch.ts";
 import useUserLocation from "./hooks/useUserLocation";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
@@ -246,10 +246,18 @@ const App: React.FC = () => {
   // Handle navigation to the user's current location
   const handleNavigate = () => {
     if (mapRef.current && userPosition) {
-      // Pass origin (userPosition) and destination (center)
       navigateToLocation(center, userPosition);
     } else {
       console.error("User position is not available");
+    }
+  };
+
+  // Handle user clicking "My Location"
+  const handleMyLocation = () => {
+    if (mapRef.current && userPosition) {
+      setCenter(userPosition); // Update the center of the map to user's location
+    } else {
+      console.error("User location is not available");
     }
   };
 
@@ -260,11 +268,13 @@ const App: React.FC = () => {
   return (
     <div className="app-container">
       <div className="top-footer">
-        <Buttons
-          onGeocode={handleGeocode}
-          onClear={handleClearMarkers}
-          onNavigate={handleNavigate}
+        <Buttons 
+          onGeocode={handleGeocode} 
+          onClear={handleClearMarkers} 
+          onNavigate={handleNavigate} 
           onAboutClick={handleAboutClick}
+          onMyLocation={handleMyLocation}
+
         />
         <div className="google-login-container">
           {!user ? (
@@ -287,7 +297,7 @@ const App: React.FC = () => {
       </div>
 
       <div className="bottom-footer">
-        <p>Church Locator v0.5</p>
+        <p>Church Locator v0.7</p>
       </div>
 
       {showAboutDialog && <AboutDialog open={showAboutDialog} onClose={() => setShowAboutDialog(false)} />}
