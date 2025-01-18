@@ -1,6 +1,6 @@
 import React from "react";
-import { Avatar, Button, Typography, Box } from "@mui/material";
-import "../styles/UserInfo.css";
+import { Avatar, Typography, Box, Fab } from "@mui/material";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";  // Ikona do wylogowania
 
 interface UserInfoProps {
     name: string;
@@ -10,16 +10,24 @@ interface UserInfoProps {
 
 const UserInfo: React.FC<UserInfoProps> = ({ name, avatarUrl, onLogout }) => {
     return (
-        <Box display="flex" alignItems="center" justifyContent="space-between" className="user-info">
+        <Box display="flex" alignItems="center" justifyContent="space-between">
             <Box display="flex" alignItems="center">
-                <Avatar src={avatarUrl} alt={`${name}'s avatar`} className="user-avatar" />
-                <Typography variant="h6" component="p" className="user-name" marginLeft={2}>
-                    Welcome, {name}
+                <Avatar src={avatarUrl} alt={`${name}'s avatar`} />
+                <Typography variant="h6" component="p" marginLeft={2}>
+                    Witaj, {name}
                 </Typography>
             </Box>
-            <Button variant="outlined" onClick={onLogout} className="logout-button">
-                Logout
-            </Button>
+            {/* Dodajemy przerwę między nazwiskiem a przyciskiem */}
+            <Fab
+                variant="extended"
+                size="medium"
+                color="primary"
+                onClick={onLogout}
+                sx={{ marginBottom: "10px", minWidth: "120px", marginLeft: 2 }}
+            >
+                <ExitToAppIcon sx={{ mr: 1 }} />
+                <Typography variant="caption">Wyloguj się</Typography>
+            </Fab>
         </Box>
     );
 };

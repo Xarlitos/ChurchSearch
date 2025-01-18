@@ -8,15 +8,35 @@
   background-color: #e0e0e0; /* Tło całej strony */
 }
 
+/* Ustawienie górnej sekcji z przyciskami oraz Google obok niej */
+.top-footer-container {
+  display: flex; /* Używamy flex do ustawienia obok siebie */
+  justify-content: space-between; /* Rozdzielenie elementów */
+  align-items: center; /* Ustawienie w pionie na tej samej wysokości */
+  width: 100%;
+  height: 80px; /* Ustawienie wspólnej wysokości */
+}
+
 /* Stopka górna z przyciskami */
 .top-footer {
-  display: flex;
-  flex-wrap: wrap; /* Umożliwia zawijanie przycisków na nowy rząd */
+  display: flex; /* Używamy flex w stopce górnej */
   justify-content: space-between; /* Ustawienie elementów w przestrzeni */
-  align-items: center; /* Centruje przyciski w pionie */
+  align-items: center; /* Wyrównanie w pionie */
   background-color: #e0e0e0; /* Tło w stopce górnej */
-  padding: 10px 20px; /* Zmniejszony padding */
-  width: 100%;
+  padding: 10px 20px;
+  width: 80%; /* 80% szerokości dla top-footer */
+  height: 100%; /* Wysokość ustawiona na 100% */
+}
+
+/* Kontener logowania Google obok stopki górnej */
+.google-login-container {
+  display: flex;
+  justify-content: center; /* Wyśrodkowanie w poziomie */
+  align-items: center; /* Wyśrodkowanie w pionie */
+  background-color: #e0e0e0;
+  padding: 10px;
+  width: 20%; /* Google zajmuje 20% szerokości */
+  height: 100%; /* Wysokość ustawiona na 100% */
 }
 
 /* Kontener mapy */
@@ -41,8 +61,4 @@
   padding: 5px 20px;
   font-size: 18px;
   width: 100%;
-}
-
-.google-login-container {
-  margin-left: auto; /* Ustawienie przycisku na prawą stronę */
 }

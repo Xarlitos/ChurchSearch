@@ -78,8 +78,8 @@ add to **C:\Windows\System32\drivers\etc\hosts** line
 
 ### Błędy do poprawki
 - [x] trzeba dwa razy kliknac clear, nie dziala na raz
-- [ ] wciecie gornej stopki z przyciskami
-- [ ] zeby te buttony sie zwijaly do kilku wierszy jesli okno przegladarki jest mniejsze, aktualnie sie zweza i tekst wychodzi za obrys
+- [x] wciecie gornej stopki z przyciskami
+- [x] zeby te buttony sie zwijaly do kilku wierszy jesli okno przegladarki jest mniejsze, aktualnie sie zweza i tekst wychodzi za obrys
 
 
 ### Budowa Aplikacji
@@ -100,10 +100,10 @@ add to **C:\Windows\System32\drivers\etc\hosts** line
   - [x] tytul
   - [x] krotki opis (jest w readme),
   - [x] autorzy i licencje (jest w readme).
-- [ ] okienko z szczegółami markera ulepszyć
+- [x] okienko z szczegółami markera ulepszyć
 
 ### Wyznaczanie trasy
-- [ ] jeśli nie wyjdzie logowanie do google to zrobić wyznaczanie trasy do wskazanego markera
+- [x] jeśli nie wyjdzie logowanie do google to zrobić wyznaczanie trasy do wskazanego markera
 
 ### Obsługa Logowania do Konta Google
 - [ ] Implementacja logowania za pomocą **Google OAuth**.

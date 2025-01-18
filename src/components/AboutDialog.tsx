@@ -33,9 +33,6 @@ const AboutDialog: React.FC<DialogComponentProps> = ({ open, onClose }) => {
             <li><Typography variant="body1" sx={{ fontWeight: 'bold' }}>Material-UI</Typography></li>
             <li><Typography variant="body1" sx={{ fontWeight: 'bold' }}>Vite</Typography></li>
             </ul>
-        <Typography variant="body1" paragraph>
-            Zapewniając wysoką wydajność, bezpieczeństwo i łatwą skalowalność.
-        </Typography>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="primary">
