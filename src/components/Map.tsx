@@ -1,5 +1,5 @@
-import React, {useEffect} from "react";
-import {GoogleMap, MarkerF} from "@react-google-maps/api";
+import React, { useEffect } from "react";
+import { GoogleMap, MarkerF } from "@react-google-maps/api";
 import "../styles/Map.css";
 
 interface MarkerData {
@@ -18,11 +18,72 @@ interface MapProps {
     options: google.maps.MapOptions;
     userPosition: google.maps.LatLngLiteral | null;
     mapRef?: (map: google.maps.Map | null) => void;
-    onClickMarker?: (position: MarkerData) => void; // Nowa właściwość
-
+    onClickMarker?: (position: MarkerData) => void;
+    darkMode: boolean;  // Dodanie prop do obsługi trybu ciemnego
 }
 
-const Map: React.FC<MapProps> = ({center, markers, options, userPosition, mapRef, onClickMarker}) => {
+const Map: React.FC<MapProps> = ({ center, markers, options, userPosition, mapRef, onClickMarker, darkMode }) => {
+
+    // Funkcja do ustawienia stylu mapy w zależności od trybu
+    const getMapStyles = () => {
+        if (darkMode) {
+            return [
+                {
+                    elementType: "geometry",
+                    stylers: [
+                        {
+                            color: "#212121",
+                        },
+                    ],
+                },
+                {
+                    elementType: "labels.icon",
+                    stylers: [
+                        {
+                            visibility: "off",
+                        },
+                    ],
+                },
+                {
+                    elementType: "labels.text.fill",
+                    stylers: [
+                        {
+                            color: "#757575",
+                        },
+                    ],
+                },
+                {
+                    elementType: "labels.text.stroke",
+                    stylers: [
+                        {
+                            color: "#212121",
+                        },
+                    ],
+                },
+                {
+                    featureType: "administrative",
+                    elementType: "geometry",
+                    stylers: [
+                        {
+                            color: "#757575",
+                        },
+                    ],
+                },
+                {
+                    featureType: "administrative.country",
+                    elementType: "labels.text.fill",
+                    stylers: [
+                        {
+                            color: "#9e9e9e",
+                        },
+                    ],
+                },
+                // Dalsze style w trybie ciemnym
+            ];
+        } else {
+            return [];  // Domyślny (jasny) tryb mapy
+        }
+    };
 
     useEffect(() => {
         if (userPosition && mapRef) {
@@ -31,31 +92,40 @@ const Map: React.FC<MapProps> = ({center, markers, options, userPosition, mapRef
     }, [mapRef, userPosition]);
 
     return (
-        <GoogleMap mapContainerClassName={"google-map"} center={center} zoom={6} options={options}
-                   onLoad={(map) => mapRef?.(map)} // Zwróć instancję mapy
-                   onUnmount={() => mapRef?.(null)}>
+        <GoogleMap
+            mapContainerClassName={"google-map"}
+            center={center}
+            zoom={6}
+            options={{
+                ...options,
+                styles: getMapStyles(),  // Dodanie stylów mapy
+            }}
+            onLoad={(map) => mapRef?.(map)} 
+            onUnmount={() => mapRef?.(null)}
+        >
             {markers.map(marker => (
-                <MarkerF key={marker.id} position={marker.position}
-                         icon={{
-                             url: marker.isFavourite
-                                 ?
-                                 "/favouriteMarker.png"
-                                 :
-                                 "/location.png",
-                             scaledSize: new google.maps.Size(30, 30), // Rozmiar ikony
-                             anchor: new google.maps.Point(20, 40) // Ustawienie punktu na dole ikony
-                         }}
-                         onClick={() => {
-                             if (onClickMarker) {
-                                 onClickMarker(marker);
-                             }
-                         }}/>
+                <MarkerF
+                    key={marker.id}
+                    position={marker.position}
+                    icon={{
+                        url: marker.isFavourite
+                            ? "/favouriteMarker.png"
+                            : "/location.png",
+                        scaledSize: new google.maps.Size(30, 30),
+                        anchor: new google.maps.Point(20, 40),
+                    }}
+                    onClick={() => {
+                        if (onClickMarker) {
+                            onClickMarker(marker);
+                        }
+                    }}
+                />
             ))}
             {userPosition && (
                 <MarkerF
                     position={userPosition}
                     icon={{
-                        url: "dot.png", // Ikona dla pozycji użytkownika
+                        url: "dot.png",
                         scaledSize: new google.maps.Size(15, 15),
                     }}
                 />

@@ -1,14 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Typography } from '@mui/material';
 import { Libraries, useLoadScript } from "@react-google-maps/api";
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import NewMap from "./components/Map";
 import Buttons from "./components/Buttons";
+import UserInfo from "./components/UserInfo.tsx";
 import AboutDialog from "./components/AboutDialog";
 import useGeocode from "./hooks/useGeocode";
-//import useNavigateToLocation from "./hooks/useNavigateToLocation";
 import useNearbySearch from "./hooks/useNearbySearch.ts";
 import useUserLocation from "./hooks/useUserLocation";
-import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
-import UserInfo from "./components/UserInfo.tsx";
 import useMarkers from "./hooks/useMarkers";
 import "./styles/App.css";
 
@@ -20,10 +20,10 @@ interface UserData {
 const LIBRARIES: Libraries = ["places", "marker"];
 const MAP_OPTIONS: google.maps.MapOptions = {
   disableDefaultUI: true,
-  zoomControl: false,
-  fullscreenControl: false,
-  streetViewControl: false,
-  mapTypeControl: false,
+  zoomControl: true,
+  fullscreenControl: true,
+  streetViewControl: true,
+  mapTypeControl: true,
 };
 
 const App: React.FC = () => {
@@ -48,12 +48,16 @@ const App: React.FC = () => {
     const {searchNearby} = useNearbySearch(mapRef.current);
     const {geocode} = useGeocode();
     const {markers, addMarker, clearMarkers, toggleFavourite, loadFavorites} = useMarkers();
+    const [darkMode, setDarkMode] = useState(false);
     const {isLoaded} = useLoadScript({
         googleMapsApiKey: apiKey,
         libraries: LIBRARIES,
     });
 
-    //const {navigateToLocation} = useNavigateToLocation(mapRef);
+    // dark mode app
+    const toggleDarkMode = () => {
+      setDarkMode(prev => !prev);
+    };
 
     // Handle geocoding and placing markers on the map
     const handleGeocode = async (location: string) => {
@@ -213,7 +217,7 @@ const App: React.FC = () => {
 
         const userData: UserData = {
             name: "John Doe",
-            avatarUrl: "https://example.com/avatar.jpg",
+            avatarUrl: 'https://example.com/avatar.jpg',
         };
 
         setUser(userData);
@@ -247,31 +251,23 @@ const App: React.FC = () => {
         directionsRenderer?.setMap(null);
     }
 
-    // Handle navigation to the user's current location
-    /*  const handleNavigate = () => {
-        if (mapRef.current && userPosition) {
-          navigateToLocation(center, userPosition);
-        } else {
-          console.error("User position is not available");
-        }
-      };*/
 
     const handleNavigate = async (destinationAddress: string) => {
         if (destinationAddress && mapRef.current && userPosition) {
             try {
                 const result = await geocode(destinationAddress); // Użyj funkcji geokodowania do pobrania współrzędnych adresu
                 if (result) {
-                  //  setDirectionsRenderer(result); // Zapisz współrzędne adresu
-
                     // Wywołaj funkcję nawigacyjną
                     setRoute(result);
                 } else {
                     console.error("Couldn't geocode the address.");
                 }
-            } catch (error) {
+            } 
+            catch (error) {
                 console.error("Geocoding error:", error);
             }
-        } else {
+        } 
+        else {
             console.error("Address or user location is not available.");
         }
     };
@@ -281,6 +277,7 @@ const App: React.FC = () => {
   const handleMyLocation = () => {
     if (mapRef.current && userPosition) {
       setCenter(userPosition); // Update the center of the map to user's location
+      mapRef.current.setZoom(18);
     } else {
       console.error("User location is not available");
     }
@@ -291,25 +288,27 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="app-container">
-      <div className="top-footer">
-        <Buttons
-          onGeocode={handleGeocode}
-          onClear={handleClearMarkers}
-          onNavigate={handleNavigate}
-          onAboutClick={handleAboutClick}
-          onMyLocation={handleMyLocation}
-
-        />
+    <div className={`app-container ${darkMode ? 'dark' : ''}`}>
+      <div className="top-footer-container">
+        <div className="top-footer">
+          <Buttons 
+            onGeocode={handleGeocode} 
+            onClear={handleClearMarkers} 
+            onNavigate={handleNavigate} 
+            onAboutClick={handleAboutClick} 
+            onMyLocation={handleMyLocation}
+            darkMode={darkMode}
+            setDarkMode={setDarkMode}
+          />
+        </div>
         <div className="google-login-container">
           {!user ? (
             <GoogleLogin onSuccess={handleSuccess} onError={handleError} useOneTap />
           ) : (
-            <UserInfo name={user.name} avatarUrl={user.avatarUrl} onLogout={handleLogout} />
+            <UserInfo name={user.name} avatarUrl={"https://example.com/avatar.jpg"} onLogout={handleLogout} />
           )}
         </div>
       </div>
-
       <div className="map-container">
         <NewMap
           center={center}
@@ -318,16 +317,33 @@ const App: React.FC = () => {
           userPosition={userPosition}
           mapRef={(map) => (mapRef.current = map)}
           onClickMarker={handleMarkerClick}
+          darkMode={darkMode}  // Dodanie darkMode jako prop
         />
       </div>
 
+  
       <div className="bottom-footer">
-        <p>Church Locator v0.7</p>
+          <Typography 
+            variant="body2" 
+            color={darkMode ? "white" : "textSecondary"} 
+            align="center"
+          >
+          Church Locator v0.9.1
+        </Typography>
       </div>
-
-      {showAboutDialog && <AboutDialog open={showAboutDialog} onClose={() => setShowAboutDialog(false)} />}
+  
+       {/* Przekazanie darkMode do AboutDialog */}
+      {showAboutDialog && (
+        <AboutDialog 
+          open={showAboutDialog} 
+          onClose={() => setShowAboutDialog(false)} 
+          darkMode={darkMode}  // Przekazanie darkMode do AboutDialog
+        />
+      )}
     </div>
   );
+  
+  
 };
 
 export default App;
