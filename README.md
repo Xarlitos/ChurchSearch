@@ -33,7 +33,8 @@ sudo chmod +x ./install_req_app.sh
 
 2. docker run app with docker compose
 ```
-./docker/run_app.sh [options]
+./docker/run_app.sh -s
+# or use other options
 ```
 ### Explanation of options:
 
