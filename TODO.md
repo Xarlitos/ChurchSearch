@@ -1,7 +1,6 @@
 # TODO List
 
 ### New Features
-### New Features (adjusted for local data storage)
 
 - [ ] marker clustering: reduce the number of markers when zooming out and display their count
   - [ ] research and choose a suitable clustering library (e.g. MarkerClusterer for Google Maps)
