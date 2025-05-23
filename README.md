@@ -64,7 +64,7 @@ colima stop
 
 
 ### hosts
-add to **C:\Windows\System32\drivers\etc\hosts** line 
+add to `C:\Windows\System32\drivers\etc\hosts` line 
 ```
 127.0.0.1    church.pl
 ```
