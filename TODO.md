@@ -9,7 +9,7 @@
   - [ ] test clustering behavior on different zoom levels
 
 - [ ] ability to filter churches by type (Protestant, Catholic, etc.)
-  - [ ] create filter UI component with checkboxes or dropdown
+  - [x] create filter UI component with checkboxes or dropdown
   - [ ] filter markers based on selected types using local data stored in app state or local JSON
   - [ ] persist filter settings locally using `localStorage` to remember user preferences
   - [ ] test filtering with multiple selections
