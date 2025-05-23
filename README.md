@@ -2,18 +2,6 @@
 
 Aplikacja umożliwia wyszukiwanie kościołów w określonym mieście za pomocą Google Places API. Użytkownik podaje nazwę miasta, a aplikacja korzysta z API Google, aby zwrócić listę dostępnych kościołów w tej lokalizacji. Wyniki wyszukiwania zawierają szczegóły takie jak nazwa kościoła, adres, oraz dane kontaktowe, jeśli są dostępne. Aplikacja ma na celu ułatwienie znalezienia kościołów w danym obszarze, wspierając użytkowników w planowaniu odwiedzin i wydarzeń religijnych.
 
-# Used Technologies
-
-- **React** – A JavaScript library used for building user interfaces, especially for single-page applications (SPA). It enables the creation of dynamic and interactive web pages.
-- **Vite** – A build tool for JavaScript applications that provides fast compilation and Hot Module Replacement (HMR) for development.
-- **TypeScript** – A superset of JavaScript that provides static typing, enabling better tooling and easier debugging.
-- **Google API** – Various Google services, such as the Google Maps API or others, used to integrate Google features into the application.
-- **Docker Compose** – Used for containerizing the application, ensuring easy deployment and scalability across different environments.
-- **Git** – Version control system used for managing the source code and collaboration within the team.
-- **Nginx** – A web server and reverse proxy used to serve the application and handle HTTPS traffic in production environments.
-- **OpenSSL** – Ensures secure communication through HTTPS, especially in production environments, by encrypting data in transit.
-- **WSL2** – Windows Subsystem for Linux 2, used for running Linux-based applications and tools on Windows, improving development workflow with Linux environments.
-
 # Run project
 ## ENV
  - Generating your API key and paste in '.env.example'
@@ -70,90 +58,66 @@ colima start --cpu 4 --memory 8
 colima stop
 ```
 
-### Dodaj certyfikat do zaufanych:
-  - W folderze C:\Users znajdziesz plik `rootCA.pem`.
-  - Uruchom **PowerShell** jako administrator i wykonaj komendę:
-    ```
-    Import-Certificate -FilePath "C:\Users\rootCA.pem" -CertStoreLocation "Cert:\LocalMachine\Root"
-    ```
-  - Następnie dodaj certyfikat w przeglądarce do zaufanych.
 
-### Wpis hosts
+### hosts
 add to **C:\Windows\System32\drivers\etc\hosts** line 
 ```
-127.0.0.1    church.local
+127.0.0.1    church.pl
 ```
 
 # TODO List
 
-### Błędy do poprawki
-- [x] trzeba dwa razy kliknac clear, nie dziala na raz
-- [x] wciecie gornej stopki z przyciskami
-- [x] zeby te buttony sie zwijaly do kilku wierszy jesli okno przegladarki jest mniejsze, aktualnie sie zweza i tekst wychodzi za obrys
+### New Features
+- [ ] marker clustering: reduce the number of markers when zooming out and display their count
+- [ ] ability to filter churches by type (Protestant, Catholic, etc.)
+- [ ] additional information on marker click, such as reviews or photos
 
 
-### Budowa Aplikacji
-- [x] Stworzenie aplikacji w React.
-  - [x] Użycie **Vite** do stworzenia aplikacji.
-  - [x] Podstawowa struktura komponentów i routingu.
-  - [x] Podstawowa struktura komponentów i routingu.
-  - [x] Wyświetlanie mapy z wykorzystaniem **Google Maps API**.
-  - [x] Wyświetlanie wyników wyszukiwania kościołów na mapie.
+### Bugs to Fix
+- [x] need to click clear button twice, it doesn't work on the first click
+- [x] indentation issue with the top footer containing buttons
+- [x] buttons should wrap into multiple rows if the browser window is smaller; currently they shrink and text overflows
 
-### Front-end aplikacji
-- [x] Strona glówna:
-  - [x] stopka z buttonami,
-  - [x] kontener mapy,
-  - [x] stopka wersji,
-  - [x] zastosowanie material ui
-  - [x] tryb dzien/noc
-- [x] Dialog 'about':
-  - [x] tytul,
-  - [x] krotki opis, uzyte technologie,
-  - [x] autorzy i licencja,
-  - [x] github button.
-- [x] okienko z szczegółami markera ulepszyć
-  - [x] wyznaczanie trasy do markera
-  - [x] dodanie markera do polubionych lokalnie
 
-### Wyznaczanie trasy
-- [x] jeśli nie wyjdzie logowanie do google to zrobić wyznaczanie trasy do wskazanego markera
+### Application Structure
+- [x] Created the application in React.
+  - [x] Used **Vite** to scaffold the app.
+  - [x] Basic component structure and routing.
+  - [x] Basic component structure and routing. *(duplicate line in original)*
+  - [x] Displaying the map using **Google Maps API**.
+  - [x] Displaying church search results on the map.
 
-### Obsługa Logowania do Konta Google
-- [ ] Implementacja logowania za pomocą **Google OAuth**.
-  - [x] Użycie **Google Sign-In** API.
-  - [ ] Integracja z aplikacją React do autoryzacji użytkownika.
-  - [ ] Przechowywanie tokenu logowania (np. w lokalnym stanie lub w `localStorage`).
+### Front-end of the Application
+- [x] Main page:
+  - [x] footer with buttons,
+  - [x] map container,
+  - [x] version footer,
+  - [x] applied Material UI
+  - [x] day/night mode
+- [x] 'About' dialog:
+  - [x] title,
+  - [x] short description, used technologies,
+  - [x] authors and license,
+  - [x] GitHub button.
+- [x] improve marker details popup
+  - [x] route planning to marker
+  - [x] add marker to locally saved favorites
 
-### Obsługa Dodawania Lokalizacji do Ulubionych na Koncie Google
-- [ ] Dodanie funkcji, która pozwala użytkownikowi na:
-  - [x] Kliknięcie na kościół na mapie wyświetlanej w aplikacji.
-  - [ ] Dodanie lokalizacji kościoła do listy ulubionych w koncie Google.
-  - [ ] Użycie **Google Places API** lub **Google My Places API** do zapisywania lokalizacji na koncie Google użytkownika.
-  - [ ] Powiadomienie użytkownika o pomyślnym dodaniu lokalizacji.
+### Route Planning
+- [x] if implementation Google login without server in app fails (CORS itp), implement route planning to the selected marker
 
-### Docker compose
-- [x] **Dockeryzacja**
-    - [x] Konteneryzacja apliakcji **node.js**
-    - [x] konteneryzacja serwera **Nginx**
-    - [x] Utworzenie **nginx.conf** do serwowania React i obsługi HTTPS.
-    - [x] Stworzenie **Dockerfile**, który określa jak zbudować obraz aplikacji
-    - [x] Stworzenie **docker-compose.yml** dla node oraz nginx
-    - [x] Dodanie odpowiednich plików konfiguracyjnych `.dockerignore` oraz `.gitignore`
 
-- [x] **SSL plus domena lokalna**
-    - [x] Skonfigurowanie SSL w aplikacji webowej
-    - [x] generowanie certyfikatów SSL
-    - [x] Przypisanie lokalnej domeny (np. `localhost` lub `church.local`) do aplikacji
-    - [x] Ustawienie serwera na obsługę HTTPS w środowisku deweloperskim
+### Docker Compose
+- [x] **Dockerization**
+    - [x] Containerization of the **Node.js** application
+    - [x] Containerization of the **Nginx** server
+    - [x] Created **nginx.conf** to serve React and handle HTTPS
+    - [x] Created **Dockerfile** specifying how to build the app image
+    - [x] Created **docker-compose.yml** for Node and Nginx
+    - [x] Added appropriate config files `.dockerignore` and `.gitignore`
 
-# License 
-MIT License
-
-Copyright (c) 2024 Mikołaj Burdak, Mikołaj Domanowski
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+- [x] **SSL and local domain**
+    - [x] Configured SSL in the web application
+    - [x] Generated SSL certificates
+    - [x] Assigned a local domain (e.g. `localhost` or `church.local`) to the app
+    - [x] Set up the server to support HTTPS in the development environment
