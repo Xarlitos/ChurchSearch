@@ -10,9 +10,6 @@
 
 - [ ] ability to filter churches by type (Protestant, Catholic, etc.)
   - [x] create filter UI component with checkboxes or dropdown
-  - [ ] filter markers based on selected types using local data stored in app state or local JSON
-  - [ ] persist filter settings locally using `localStorage` to remember user preferences
-  - [ ] test filtering with multiple selections
 
 - [x] additional information on marker click, such as reviews or photos
 

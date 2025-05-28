@@ -4,6 +4,7 @@ import { Libraries, useLoadScript } from "@react-google-maps/api";
 import NewMap from "./components/Map";
 import Buttons from "./components/Buttons";
 import AboutDialog from "./components/AboutDialog";
+import MarkerInfoDialog, { Marker } from "./components/MarkerInfoDialog"; // <- import
 import useGeocode from "./hooks/useGeocode";
 import useUserLocation from "./hooks/useUserLocation";
 import useMarkers from "./hooks/useMarkers";
@@ -30,6 +31,7 @@ const App: React.FC = () => {
   const [center, setCenter] = useState<google.maps.LatLngLiteral>({ lat: 51.9194, lng: 19.1451 });
   const [showAboutDialog, setShowAboutDialog] = useState(false);
   const [shouldFetchMarkers, setShouldFetchMarkers] = useState(true);
+  const [selectedMarker, setSelectedMarker] = useState<Marker | null>(null); // nowy stan
   const mapRef = useRef<google.maps.Map | null>(null);
   const { geocode } = useGeocode();
   const { markers, addMarker, clearMarkers } = useMarkers();
@@ -77,42 +79,9 @@ const App: React.FC = () => {
 
   const handleAboutClick = () => setShowAboutDialog(true);
 
-  const handleMarkerClick = (marker: any) => {
-    if (!mapRef.current) return;
-
-    const { id, name, position, address, rating, userRatingsTotal, website, phone } = marker;
-    const buttonStyle = `
-      display: flex; align-items: center; gap: 4px; padding: 8px;
-      border: none; color: white; border-radius: 4px; cursor: pointer;
-      width: 150px;
-    `;
-
-    const content = `
-      <div style="font-family: Arial, sans-serif; max-width: 300px; padding: 10px;">
-        <h3 style="margin: 0; font-size: 1.2em;">${name}</h3>
-        <p><strong>Coordinates:</strong> ${position.lat.toFixed(6)}, ${position.lng.toFixed(6)}</p>
-        <p><strong>Address:</strong> ${address}</p>
-        ${rating ? `<p><strong>Rating:</strong> ${rating} (${userRatingsTotal || 0} reviews)</p>` : ""}
-        ${phone ? `<p><strong>Phone:</strong> ${phone}</p>` : ""}
-        ${website ? `<p><a href="${website}" target="_blank">Website</a></p>` : ""}
-        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
-          <button id="set-route-${id}"
-              style="${buttonStyle} background: #1976d2;">
-              <img src="route.png" alt="route image" style="width: 20px; height: 20px;" />
-              <span>Set Route</span>
-          </button>
-        </div>
-      </div>`;
-
-    const infoWindow = new google.maps.InfoWindow({ content, position });
-    infoWindow.open(mapRef.current);
-
-    google.maps.event.addListenerOnce(infoWindow, "domready", () => {
-      const button = document.getElementById(`set-route-${id}`);
-      if (button) {
-        button.addEventListener("click", () => setRoute(position));
-      }
-    });
+  // zamiast tworzyć InfoWindow, ustawiamy selectedMarker
+  const handleMarkerClick = (marker: Marker) => {
+    setSelectedMarker(marker);
   };
 
   const setRoute = (destination: google.maps.LatLngLiteral) => {
@@ -222,6 +191,17 @@ const App: React.FC = () => {
           darkMode={darkMode}
         />
       )}
+
+      {/* tutaj dialog */}
+      <MarkerInfoDialog
+        open={!!selectedMarker}
+        onClose={() => setSelectedMarker(null)}
+        marker={selectedMarker}
+        setRoute={(pos) => {
+          setRoute(pos);
+          setSelectedMarker(null);
+        }}
+      />
     </div>
   );
 };
