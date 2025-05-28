@@ -43,6 +43,7 @@ const App: React.FC = () => {
   });
   const { searchNearbyWithDetails } = useDetailedNearbySearch(mapRef.current);
   const [filters, setFilters] = useState<string[]>([]);
+  const [radius, setRadius] = useState<number>(5000);
 
   const filteredMarkers = filters.length === 0 || filters.includes("All")
     ? markers
@@ -69,17 +70,21 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
-    if (mapRef.current && shouldFetchMarkers) {
-      searchNearbyWithDetails(center, 5000)
-        .then((places) => {
-          clearMarkers();
-          places.forEach(addMarker);
-          setShouldFetchMarkers(false);
-          mapRef.current!.setZoom(13);
-        })
-        .catch(console.error);
+  if (mapRef.current && shouldFetchMarkers) {
+    searchNearbyWithDetails(center, radius)
+      .then((places) => {
+        clearMarkers();
+        places.forEach(addMarker);
+        setShouldFetchMarkers(false);
+        mapRef.current!.setZoom(13);
+      })
+      .catch(console.error);
     }
-  }, [center, searchNearbyWithDetails, addMarker, clearMarkers, shouldFetchMarkers]);
+  }, [center, radius, searchNearbyWithDetails, addMarker, clearMarkers, shouldFetchMarkers]);
+
+  useEffect(() => {
+    setShouldFetchMarkers(true);
+  }, [radius]);
 
   const handleAboutClick = () => setShowAboutDialog(true);
 
@@ -162,6 +167,8 @@ const App: React.FC = () => {
             darkMode={darkMode}
             setDarkMode={setDarkMode}
             onFilterChange={setFilters}
+            radius={radius}         // przekazanie promienia
+            setRadius={setRadius}   // przekazanie setteru
           />
         </div>
       </div>

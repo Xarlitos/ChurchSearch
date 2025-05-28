@@ -36,9 +36,14 @@ const useDetailedNearbySearch = (map: google.maps.Map | null) => {
 
   const isValidPlace = (type: PlaceType, details: google.maps.places.PlaceResult): boolean => {
     if (type === "buddhist_temple") {
-      // ignoruj hotele i apartamenty
       if (/hotel|apartments|residence/i.test(details.name || "")) return false;
     }
+    if (!details.types) return false;
+
+    // Wyklucz miasta i polityczne miejsca
+    const excludeTypes = ["locality", "political", "administrative_area_level_1", "administrative_area_level_2"];
+    if (details.types.some(t => excludeTypes.includes(t))) return false;
+
     return true;
   };
 
@@ -86,7 +91,6 @@ const useDetailedNearbySearch = (map: google.maps.Map | null) => {
                     type,
                   });
                 } else {
-                  // jeśli brak detali lub nie przechodzi filtra, można pominąć albo zwrócić minimalne info
                   res(null);
                 }
               });
