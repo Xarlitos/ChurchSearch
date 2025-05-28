@@ -36,7 +36,7 @@ const useDetailedNearbySearch = (map: google.maps.Map | null) => {
 
   const isValidPlace = (type: PlaceType, details: google.maps.places.PlaceResult): boolean => {
     if (type === "buddhist_temple") {
-      if (/hotel|apartments|residence/i.test(details.name || "")) return false;
+      if (/hotel|apartments|Hotel|Hôtel|residence/i.test(details.name || "")) return false;
     }
     if (!details.types) return false;
 
@@ -87,6 +87,7 @@ const useDetailedNearbySearch = (map: google.maps.Map | null) => {
                     userRatingsTotal: details.user_ratings_total,
                     phone: details.formatted_phone_number,
                     website: details.website,
+                    photos: details.photos ? details.photos.map(photo => photo.getUrl()) : [],
                     isFavourite: false,
                     type,
                   });

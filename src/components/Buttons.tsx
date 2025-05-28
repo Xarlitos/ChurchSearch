@@ -32,7 +32,7 @@ interface ButtonsProps {
   setRadius: (radius: number) => void;
 }
 
-const filterOptions = ["All", "church", "mosque", "synagogue", "hindu_temple", "buddhist_temple", "place_of_worship"];
+const filterOptions = ["All", "church", "mosque", "synagogue", "hindu_temple", "buddhist_temple" ];
 
 const radiusOptions = [
   { label: "1 km", value: 1000 },
@@ -49,7 +49,6 @@ const Buttons: React.FC<ButtonsProps> = ({
   onMyLocation,
   darkMode,
   setDarkMode,
-  mapRef,
   onFilterChange,
   radius,
   setRadius,

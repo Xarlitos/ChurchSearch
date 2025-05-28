@@ -11,13 +11,17 @@
 - [x] ability to filter churches by type (Protestant, Catholic, etc.)
   - [x] create filter UI component with checkboxes or dropdown
   - [x] implement filters in search function
-  - [ ] fix bug: in db google for ex. hotel is somentimes like buddisht temple (in paris for ex.)
+  - [x] fix bug: in db google for ex. hotel is somentimes like buddisht temple (in paris for ex.)
 
 - [x] additional information on marker click, such as reviews or photos
+  - [x] reviews
+  - [x] photo
+  - [x] type of temple
+  - [x] website + phone
 
 - [x] add autocomplete searching location
 
-- [ ] add custom search radius selector in the top footer
+- [x] add custom search radius selector in the top footer
 
 ### Bugs to Fix
 - [x] need to click clear button twice, it doesn't work on the first click

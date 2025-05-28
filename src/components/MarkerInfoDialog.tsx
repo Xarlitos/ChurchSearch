@@ -16,7 +16,8 @@ export interface Marker {
   userRatingsTotal?: number;
   website?: string;
   phone?: string;
-  type?: string;  // zmienione z category na type
+  type?: string;
+  photos?: string[];  // dodane pole na zdjęcia
 }
 
 interface MarkerInfoDialogProps {
@@ -44,16 +45,19 @@ const MarkerInfoDialog: React.FC<MarkerInfoDialogProps> = ({
         <Typography variant="body2" gutterBottom>
           <strong>Address:</strong> {marker.address}
         </Typography>
+
         {marker.rating !== undefined && (
           <Typography variant="body2" gutterBottom>
             <strong>Rating:</strong> {marker.rating} ({marker.userRatingsTotal || 0} reviews)
           </Typography>
         )}
+
         {marker.phone && (
           <Typography variant="body2" gutterBottom>
             <strong>Phone:</strong> {marker.phone}
           </Typography>
         )}
+
         {marker.website && (
           <Typography variant="body2" gutterBottom>
             <Link href={marker.website} target="_blank" rel="noopener noreferrer">
@@ -61,11 +65,23 @@ const MarkerInfoDialog: React.FC<MarkerInfoDialogProps> = ({
             </Link>
           </Typography>
         )}
+
         {marker.type && (
           <Typography variant="body2" gutterBottom sx={{ color: 'blue', fontWeight: 'bold' }}>
             <strong>Type:</strong> {marker.type}
           </Typography>
         )}
+        
+        {marker.photos && marker.photos.length > 0 && (
+          <Box mt={2} mb={2} textAlign="center">
+            <img
+              src={marker.photos[0]}
+              alt={marker.name}
+              style={{ maxWidth: "100%", maxHeight: 200, borderRadius: 8 }}
+            />
+          </Box>
+        )}
+
         <Box mt={2}>
           <Button
             variant="contained"
