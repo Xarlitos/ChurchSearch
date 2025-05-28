@@ -14,12 +14,9 @@
   - [ ] persist filter settings locally using `localStorage` to remember user preferences
   - [ ] test filtering with multiple selections
 
-- [ ] additional information on marker click, such as reviews or photos
-  - [ ] design popup/modal layout for displaying extra info
-  - [ ] store reviews and photos locally (e.g. in JSON files or in `localStorage`)
-  - [ ] implement photo gallery or carousel inside marker popup using local data
-  - [ ] optionally add UI for users to add reviews/photos locally (saved in `localStorage`)
-  - [ ] ensure responsive design for mobile and desktop views
+- [x] additional information on marker click, such as reviews or photos
+
+- [x] add autocomplete searching location
 
 
 ### Bugs to Fix

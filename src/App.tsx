@@ -181,6 +181,7 @@ const App: React.FC = () => {
       <div className="top-footer-container">
         <div className="top-footer">
           <Buttons
+            mapRef={mapRef}
             onGeocode={handleGeocode}
             onClear={handleClearMarkers}
             onNavigate={handleNavigate}

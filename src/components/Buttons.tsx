@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Box from "@mui/material/Box";
 import Fab from "@mui/material/Fab";
 import NavigationIcon from "@mui/icons-material/Navigation";
@@ -6,18 +6,18 @@ import LocationSearchingIcon from "@mui/icons-material/LocationSearching";
 import ClearIcon from "@mui/icons-material/Clear";
 import InfoIcon from "@mui/icons-material/Info";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
-import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { styled } from '@mui/material/styles';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
-import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Checkbox from "@mui/material/Checkbox";
 import ListItemText from "@mui/material/ListItemText";
 import FilterListIcon from '@mui/icons-material/FilterList';
+
+import { Autocomplete } from "@react-google-maps/api";
 
 interface ButtonsProps {
   onGeocode: (location: string) => Promise<void>;
@@ -27,10 +27,10 @@ interface ButtonsProps {
   onMyLocation: () => void;
   darkMode: boolean;
   setDarkMode: React.Dispatch<React.SetStateAction<boolean>>;
+  mapRef: React.RefObject<google.maps.Map | null>;
 }
 
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
-  // ... Twój styl przełącznika ...
 }));
 
 const Buttons = ({
@@ -41,16 +41,34 @@ const Buttons = ({
   onMyLocation,
   darkMode,
   setDarkMode,
+  mapRef,
 }: ButtonsProps) => {
-  const [location, setLocation] = useState<string>("");
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [checkedOptions, setCheckedOptions] = useState<string[]>([]);
+  const [location, setLocation] = useState("");
+  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
   const filterOptions = ["Protestant", "Muslim", "Catholic"];
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      onGeocode(location);
+  const onLoad = (autocomplete: google.maps.places.Autocomplete) => {
+    autocompleteRef.current = autocomplete;
+  };
+
+  const onPlaceChanged = () => {
+    if (autocompleteRef.current !== null) {
+      const place = autocompleteRef.current.getPlace();
+      if (!place) return;
+
+      if (place.formatted_address) {
+        setLocation(place.formatted_address);
+        onGeocode(place.formatted_address);
+      } else if (place.name) {
+        setLocation(place.name);
+        onGeocode(place.name);
+      } else {
+        // fallback, jeśli brak obu
+        console.warn("Place has no formatted_address or name");
+      }
     }
   };
 
@@ -63,13 +81,9 @@ const Buttons = ({
   };
 
   const handleToggleOption = (option: string) => {
-    const currentIndex = checkedOptions.indexOf(option);
-    const newChecked = [...checkedOptions];
-
-    if (currentIndex === -1) newChecked.push(option);
-    else newChecked.splice(currentIndex, 1);
-
-    setCheckedOptions(newChecked);
+    setCheckedOptions(prev =>
+      prev.includes(option) ? prev.filter(o => o !== option) : [...prev, option]
+    );
   };
 
   return (
@@ -81,88 +95,64 @@ const Buttons = ({
       width="100%"
       sx={{ padding: "0 10px", flexWrap: "wrap" }}
     >
-      <TextField
-        variant="outlined"
-        label={darkMode ? "Search" : "Search"}
-        value={location}
-        onChange={(e) => setLocation(e.target.value)}
-        onKeyDown={handleKeyPress}
-        sx={{
-          flex: 1,
-          maxWidth: "400px",
-          marginBottom: "10px",
-          "& .MuiOutlinedInput-root": {
-            borderColor: darkMode ? "#fff" : "#000",
-            color: darkMode ? "#fff" : "#000",
-          },
-          "& .MuiOutlinedInput-root.Mui-focused": {
-            borderColor: darkMode ? "#fff" : "#3f51b5",
-          },
-          "& .MuiInputLabel-root": {
-            color: darkMode ? "#fff" : "#000",
-          },
-          "& .MuiInputLabel-root.Mui-focused": {
-            color: darkMode ? "#fff" : "#3f51b5",
-          },
-          "& .MuiOutlinedInput-notchedOutline": {
-            borderColor: darkMode ? "#fff" : "#000",
-          },
-        }}
-      />
+      <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
 
-      <Fab variant="extended" size="medium" color="primary" onClick={() => onGeocode(location)} sx={{ marginBottom: "10px" }}>
+        <input
+          type="text"
+          placeholder="Search location"
+          value={location}
+          onChange={e => setLocation(e.target.value)}
+          style={{
+            width: "300px",
+            height: "40px",
+            padding: "0 12px",
+            borderRadius: "4px",
+            border: `1px solid ${darkMode ? "#fff" : "#ccc"}`,
+            color: darkMode ? "#fff" : "#000",
+            backgroundColor: darkMode ? "#222" : "#fff",
+          }}
+        />
+
+      </Autocomplete>
+
+      <Fab variant="extended" size="medium" color="primary" onClick={() => onGeocode(location)} sx={{ mb: "10px" }}>
         <LocationSearchingIcon sx={{ mr: 1 }} />
         <Typography variant="caption" sx={{ whiteSpace: "nowrap" }}>
           Search
         </Typography>
       </Fab>
 
-      <Fab variant="extended" size="medium" color="primary" onClick={() => onNavigate(location)} sx={{ marginBottom: "10px" }}>
+      <Fab variant="extended" size="medium" color="primary" onClick={() => onNavigate(location)} sx={{ mb: "10px" }}>
         <NavigationIcon sx={{ mr: 1 }} />
         <Typography variant="caption" sx={{ whiteSpace: "nowrap" }}>
           Navigate
         </Typography>
       </Fab>
 
-      <Fab variant="extended" size="medium" color="primary" onClick={onClear} sx={{ marginBottom: "10px" }}>
+      <Fab variant="extended" size="medium" color="primary" onClick={onClear} sx={{ mb: "10px" }}>
         <ClearIcon sx={{ mr: 1 }} />
-        <Typography variant="caption" sx={{ whiteSpace: "nowrap" }}>
-          Clear
-        </Typography>
+        <Typography variant="caption">Clear</Typography>
       </Fab>
 
-      <Fab variant="extended" size="medium" color="primary" onClick={onAboutClick} sx={{ marginBottom: "10px" }}>
+      <Fab variant="extended" size="medium" color="primary" onClick={onAboutClick} sx={{ mb: "10px" }}>
         <InfoIcon sx={{ mr: 1 }} />
-        <Typography variant="caption" sx={{ whiteSpace: "nowrap" }}>
-          About
-        </Typography>
+        <Typography variant="caption">About</Typography>
       </Fab>
 
-      <Fab variant="extended" size="medium" color="primary" onClick={onMyLocation} sx={{ marginBottom: "10px" }}>
+      <Fab variant="extended" size="medium" color="primary" onClick={onMyLocation} sx={{ mb: "10px" }}>
         <MyLocationIcon sx={{ mr: 1 }} />
-        <Typography variant="caption" sx={{ whiteSpace: "nowrap" }}>
-          My Location
-        </Typography>
+        <Typography variant="caption">My Location</Typography>
       </Fab>
 
-      {/* Przycisk Filtry */}
-      <Fab
-        variant="extended"
-        size="medium"
-        color="primary"
-        onClick={handleFilterClick}
-        sx={{ marginBottom: "10px" }}
-      >
+      <Fab variant="extended" size="medium" color="primary" onClick={handleFilterClick} sx={{ mb: "10px" }}>
         <FilterListIcon sx={{ mr: 1 }} />
-        <Typography variant="caption" sx={{ whiteSpace: "nowrap" }}>
-          Filtrs
-        </Typography>
+        <Typography variant="caption">Filtrs</Typography>
       </Fab>
 
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleFilterClose}>
-        {filterOptions.map((option) => (
+        {filterOptions.map(option => (
           <MenuItem key={option} onClick={() => handleToggleOption(option)}>
-            <Checkbox checked={checkedOptions.indexOf(option) !== -1} />
+            <Checkbox checked={checkedOptions.includes(option)} />
             <ListItemText primary={option} />
           </MenuItem>
         ))}
