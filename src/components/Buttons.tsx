@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import React, { useState, useRef } from "react";
 import Box from "@mui/material/Box";
 import Fab from "@mui/material/Fab";
 import NavigationIcon from "@mui/icons-material/Navigation";
@@ -28,10 +28,10 @@ interface ButtonsProps {
   darkMode: boolean;
   setDarkMode: React.Dispatch<React.SetStateAction<boolean>>;
   mapRef: React.RefObject<google.maps.Map | null>;
+  onFilterChange: (filters: string[]) => void; // nowy prop do przekazywania wybranych filtrów
 }
 
-const MaterialUISwitch = styled(Switch)(({ theme }) => ({
-}));
+const MaterialUISwitch = styled(Switch)(({ theme }) => ({}));
 
 const Buttons = ({
   onGeocode,
@@ -42,13 +42,13 @@ const Buttons = ({
   darkMode,
   setDarkMode,
   mapRef,
+  onFilterChange,
 }: ButtonsProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [checkedOptions, setCheckedOptions] = useState<string[]>([]);
   const [location, setLocation] = useState("");
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
-
-  const filterOptions = ["Protestant", "Muslim", "Catholic"];
+  const filterOptions = ["Protestant", "Muslim", "Catholic", "All"];
 
   const onLoad = (autocomplete: google.maps.places.Autocomplete) => {
     autocompleteRef.current = autocomplete;
@@ -66,7 +66,6 @@ const Buttons = ({
         setLocation(place.name);
         onGeocode(place.name);
       } else {
-        // fallback, jeśli brak obu
         console.warn("Place has no formatted_address or name");
       }
     }
@@ -81,9 +80,23 @@ const Buttons = ({
   };
 
   const handleToggleOption = (option: string) => {
-    setCheckedOptions(prev =>
-      prev.includes(option) ? prev.filter(o => o !== option) : [...prev, option]
-    );
+    setCheckedOptions(prev => {
+      let newChecked;
+      if (prev.includes(option)) {
+        newChecked = prev.filter(o => o !== option);
+      } else {
+        // Jeśli wybieramy "All", to wybieramy tylko ją i odznaczamy resztę
+        if (option === "All") {
+          newChecked = ["All"];
+        } else {
+          // usuwamy "All" jeśli jest wybrane i dodajemy ten option
+          newChecked = prev.filter(o => o !== "All");
+          newChecked = [...newChecked, option];
+        }
+      }
+      onFilterChange(newChecked);
+      return newChecked;
+    });
   };
 
   return (
@@ -96,7 +109,6 @@ const Buttons = ({
       sx={{ padding: "0 10px", flexWrap: "wrap" }}
     >
       <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
-
         <input
           type="text"
           placeholder="Search location"
@@ -112,21 +124,16 @@ const Buttons = ({
             backgroundColor: darkMode ? "#222" : "#fff",
           }}
         />
-
       </Autocomplete>
 
       <Fab variant="extended" size="medium" color="primary" onClick={() => onGeocode(location)} sx={{ mb: "10px" }}>
         <LocationSearchingIcon sx={{ mr: 1 }} />
-        <Typography variant="caption" sx={{ whiteSpace: "nowrap" }}>
-          Search
-        </Typography>
+        <Typography variant="caption" sx={{ whiteSpace: "nowrap" }}>Search</Typography>
       </Fab>
 
       <Fab variant="extended" size="medium" color="primary" onClick={() => onNavigate(location)} sx={{ mb: "10px" }}>
         <NavigationIcon sx={{ mr: 1 }} />
-        <Typography variant="caption" sx={{ whiteSpace: "nowrap" }}>
-          Navigate
-        </Typography>
+        <Typography variant="caption" sx={{ whiteSpace: "nowrap" }}>Navigate</Typography>
       </Fab>
 
       <Fab variant="extended" size="medium" color="primary" onClick={onClear} sx={{ mb: "10px" }}>
@@ -146,7 +153,7 @@ const Buttons = ({
 
       <Fab variant="extended" size="medium" color="primary" onClick={handleFilterClick} sx={{ mb: "10px" }}>
         <FilterListIcon sx={{ mr: 1 }} />
-        <Typography variant="caption">Filtrs</Typography>
+        <Typography variant="caption">Filters</Typography>
       </Fab>
 
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleFilterClose}>
@@ -163,6 +170,7 @@ const Buttons = ({
           control={
             <MaterialUISwitch sx={{ m: 1 }} checked={darkMode} onChange={() => setDarkMode(!darkMode)} />
           }
+          label="Dark Mode"
         />
       </FormGroup>
     </Box>

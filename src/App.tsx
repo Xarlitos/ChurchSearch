@@ -42,8 +42,8 @@ const App: React.FC = () => {
     libraries: LIBRARIES,
   });
   const { searchNearbyWithDetails } = useDetailedNearbySearch(mapRef.current);
+  const [filters, setFilters] = useState<string[]>([]);
 
-  const toggleDarkMode = () => setDarkMode(prev => !prev);
 
   const handleGeocode = async (location: string) => {
     try {
@@ -158,6 +158,7 @@ const App: React.FC = () => {
             onMyLocation={handleMyLocation}
             darkMode={darkMode}
             setDarkMode={setDarkMode}
+            onFilterChange={setFilters}
           />
         </div>
       </div>
@@ -180,7 +181,7 @@ const App: React.FC = () => {
           color={darkMode ? "white" : "textSecondary"}
           align="center"
         >
-          Church Locator v0.9.1
+          Church Locator v0.10.0
         </Typography>
       </div>
 
