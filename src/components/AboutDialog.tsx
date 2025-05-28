@@ -5,7 +5,7 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 interface DialogComponentProps {
   open: boolean;
   onClose: () => void;
-  darkMode: boolean;  // Prop do obsługi trybu ciemnego
+  darkMode: boolean;
 }
 
 const AboutDialog: React.FC<DialogComponentProps> = ({ open, onClose, darkMode }) => {
@@ -59,7 +59,7 @@ const AboutDialog: React.FC<DialogComponentProps> = ({ open, onClose, darkMode }
           variant="extended"
           size="medium"
           color="secondary"
-          href="https://github.com/Klusini/church-locator"
+          href="https://github.com/Xarlitos/ChurchSearch"
           target="_blank"
           sx={{ marginBottom: "10px" }}
         >

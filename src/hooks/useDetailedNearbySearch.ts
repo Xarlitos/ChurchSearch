@@ -1,7 +1,16 @@
 import { useCallback } from "react";
 
+type PlaceType =
+  | "church"
+  | "mosque"
+  | "synagogue"
+  | "hindu_temple"
+  | "buddhist_temple"
+  | "shinto_shrine"
+  | "orthodox_church";
+
 interface PlaceDetails {
-  id: number;
+  id: string;
   name: string;
   position: google.maps.LatLngLiteral;
   description: string;
@@ -11,69 +20,89 @@ interface PlaceDetails {
   phone?: string;
   website?: string;
   isFavourite: boolean;
+  type: PlaceType;
 }
 
 const useDetailedNearbySearch = (map: google.maps.Map | null) => {
+  const typesToSearch: PlaceType[] = [
+    "church",
+    "mosque",
+    "synagogue",
+    "hindu_temple",
+    "buddhist_temple",
+    "shinto_shrine",
+    "orthodox_church"
+  ];
+
+  const isValidPlace = (type: PlaceType, details: google.maps.places.PlaceResult): boolean => {
+    if (type === "buddhist_temple") {
+      // ignoruj hotele i apartamenty
+      if (/hotel|apartments|residence/i.test(details.name || "")) return false;
+    }
+    return true;
+  };
+
   const searchNearbyWithDetails = useCallback(
     (center: google.maps.LatLngLiteral, radius: number): Promise<PlaceDetails[]> => {
-      return new Promise((resolve, reject) => {
-        if (!map || !google.maps.places) {
-          return reject("Map or Places API not loaded.");
-        }
+      if (!map || !google.maps.places) {
+        return Promise.reject("Map or Places API not loaded.");
+      }
 
-        const service = new google.maps.places.PlacesService(map);
+      const service = new google.maps.places.PlacesService(map);
 
-        const request: google.maps.places.PlaceSearchRequest = {
-          location: new google.maps.LatLng(center.lat, center.lng),
-          radius,
-          type: "church",
-        };
+      const fetchByType = (type: PlaceType): Promise<PlaceDetails[]> => {
+        return new Promise((resolve) => {
+          const request: google.maps.places.PlaceSearchRequest = {
+            location: new google.maps.LatLng(center.lat, center.lng),
+            radius,
+            type,
+          };
 
-        service.nearbySearch(request, (results, status) => {
-          if (status !== google.maps.places.PlacesServiceStatus.OK || !results) {
-            return reject("Nearby search failed.");
-          }
+          service.nearbySearch(request, (results, status) => {
+            if (status !== google.maps.places.PlacesServiceStatus.OK || !results) {
+              resolve([]);
+              return;
+            }
 
-          const detailPromises = results.map((place, index) => {
-            return new Promise<PlaceDetails>((res) => {
-              if (!place.place_id) return res(null as any);
+            const detailPromises = results.map(place => new Promise<PlaceDetails | null>((res) => {
+              if (!place.place_id) return res(null);
 
               service.getDetails({ placeId: place.place_id }, (details, status) => {
-                if (status === google.maps.places.PlacesServiceStatus.OK && details) {
+                if (status === google.maps.places.PlacesServiceStatus.OK && details && isValidPlace(type, details)) {
                   res({
-                    id: index,
-                    name: details.name || "Unknown Church",
+                    id: place.place_id,
+                    name: details.name || "Unknown Place",
                     position: {
                       lat: details.geometry?.location?.lat() ?? 0,
                       lng: details.geometry?.location?.lng() ?? 0,
                     },
-                    description: details.types?.join(", ") || "No description",
+                    description: (details.types || []).join(", ") || "No description",
                     address: details.formatted_address || place.vicinity || "No address",
                     rating: details.rating,
                     userRatingsTotal: details.user_ratings_total,
                     phone: details.formatted_phone_number,
                     website: details.website,
                     isFavourite: false,
+                    type,
                   });
                 } else {
-                  res({
-                    id: index,
-                    name: place.name || "Unknown Church",
-                    position: {
-                      lat: place.geometry?.location?.lat() ?? 0,
-                      lng: place.geometry?.location?.lng() ?? 0,
-                    },
-                    description: place.types?.join(", ") || "No description",
-                    address: place.vicinity || "No address",
-                    isFavourite: false,
-                  });
+                  // jeśli brak detali lub nie przechodzi filtra, można pominąć albo zwrócić minimalne info
+                  res(null);
                 }
               });
-            });
-          });
+            }));
 
-          Promise.all(detailPromises).then(resolve).catch(reject);
+            Promise.all(detailPromises).then(results => resolve(results.filter(Boolean) as PlaceDetails[])).catch(() => resolve([]));
+          });
         });
+      };
+
+      return Promise.all(typesToSearch.map(type => fetchByType(type))).then(resultsArrays => {
+        const merged = ([] as PlaceDetails[]).concat(...resultsArrays);
+        const unique = merged.filter((place, index, self) =>
+          index === self.findIndex(p => p.id === place.id)
+        );
+        return unique;
       });
     },
     [map]

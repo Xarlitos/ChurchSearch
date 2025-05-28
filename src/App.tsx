@@ -4,7 +4,7 @@ import { Libraries, useLoadScript } from "@react-google-maps/api";
 import NewMap from "./components/Map";
 import Buttons from "./components/Buttons";
 import AboutDialog from "./components/AboutDialog";
-import MarkerInfoDialog, { Marker } from "./components/MarkerInfoDialog"; // <- import
+import MarkerInfoDialog, { Marker } from "./components/MarkerInfoDialog";
 import useGeocode from "./hooks/useGeocode";
 import useUserLocation from "./hooks/useUserLocation";
 import useMarkers from "./hooks/useMarkers";
@@ -31,7 +31,7 @@ const App: React.FC = () => {
   const [center, setCenter] = useState<google.maps.LatLngLiteral>({ lat: 51.9194, lng: 19.1451 });
   const [showAboutDialog, setShowAboutDialog] = useState(false);
   const [shouldFetchMarkers, setShouldFetchMarkers] = useState(true);
-  const [selectedMarker, setSelectedMarker] = useState<Marker | null>(null); // nowy stan
+  const [selectedMarker, setSelectedMarker] = useState<Marker | null>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
   const { geocode } = useGeocode();
   const { markers, addMarker, clearMarkers } = useMarkers();
@@ -44,6 +44,9 @@ const App: React.FC = () => {
   const { searchNearbyWithDetails } = useDetailedNearbySearch(mapRef.current);
   const [filters, setFilters] = useState<string[]>([]);
 
+  const filteredMarkers = filters.length === 0 || filters.includes("All")
+    ? markers
+    : markers.filter(marker => filters.includes(marker.type));
 
   const handleGeocode = async (location: string) => {
     try {
@@ -53,6 +56,7 @@ const App: React.FC = () => {
           id: Date.now(),
           name: location,
           position: result,
+          type: "Catholic", // Można zmienić na dynamiczne
           isFavourite: false,
         };
         setCenter(result);
@@ -79,7 +83,6 @@ const App: React.FC = () => {
 
   const handleAboutClick = () => setShowAboutDialog(true);
 
-  // zamiast tworzyć InfoWindow, ustawiamy selectedMarker
   const handleMarkerClick = (marker: Marker) => {
     setSelectedMarker(marker);
   };
@@ -166,7 +169,7 @@ const App: React.FC = () => {
       <div className="map-container">
         <NewMap
           center={center}
-          markers={markers}
+          markers={filteredMarkers}
           options={MAP_OPTIONS}
           userPosition={userPosition}
           mapRef={(map) => (mapRef.current = map)}
@@ -193,7 +196,6 @@ const App: React.FC = () => {
         />
       )}
 
-      {/* tutaj dialog */}
       <MarkerInfoDialog
         open={!!selectedMarker}
         onClose={() => setSelectedMarker(null)}

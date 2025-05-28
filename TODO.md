@@ -8,13 +8,16 @@
   - [ ] display cluster count badges on grouped markers
   - [ ] test clustering behavior on different zoom levels
 
-- [ ] ability to filter churches by type (Protestant, Catholic, etc.)
+- [x] ability to filter churches by type (Protestant, Catholic, etc.)
   - [x] create filter UI component with checkboxes or dropdown
+  - [x] implement filters in search function
+  - [ ] fix bug: in db google for ex. hotel is somentimes like buddisht temple (in paris for ex.)
 
 - [x] additional information on marker click, such as reviews or photos
 
 - [x] add autocomplete searching location
 
+- [ ] add custom search radius selector in the top footer
 
 ### Bugs to Fix
 - [x] need to click clear button twice, it doesn't work on the first click

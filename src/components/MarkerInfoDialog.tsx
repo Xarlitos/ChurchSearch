@@ -16,6 +16,7 @@ export interface Marker {
   userRatingsTotal?: number;
   website?: string;
   phone?: string;
+  type?: string;  // zmienione z category na type
 }
 
 interface MarkerInfoDialogProps {
@@ -58,6 +59,11 @@ const MarkerInfoDialog: React.FC<MarkerInfoDialogProps> = ({
             <Link href={marker.website} target="_blank" rel="noopener noreferrer">
               Website
             </Link>
+          </Typography>
+        )}
+        {marker.type && (
+          <Typography variant="body2" gutterBottom sx={{ color: 'blue', fontWeight: 'bold' }}>
+            <strong>Type:</strong> {marker.type}
           </Typography>
         )}
         <Box mt={2}>
