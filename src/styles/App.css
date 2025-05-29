@@ -99,3 +99,47 @@
   background-color: #121212; /* Ciemniejsze tło */
   color: white; /* Biały tekst w trybie ciemnym */
 }
+
+/* Panel wyników wyszukiwania */
+.search-results-panel {
+  position: absolute;
+  top: 90px; /* pod górnym paskiem */
+  right: 20px;
+  width: 300px;
+  max-height: 70vh;
+  overflow-y: auto;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  padding: 10px;
+  z-index: 1000;
+  transition: background-color 0.3s ease;
+}
+
+.app-container.dark .search-results-panel {
+  background-color: #1e1e1e;
+  color: #ddd;
+  box-shadow: 0 4px 12px rgba(255,255,255,0.1);
+}
+
+.search-results-panel h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.search-result-item {
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 5px;
+  margin-bottom: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.search-result-item:hover {
+  background-color: #eee;
+}
+
+.app-container.dark .search-result-item:hover {
+  background-color: #333;
+}
