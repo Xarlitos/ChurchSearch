@@ -7,9 +7,9 @@
   - [x] display cluster count badges on grouped markers
 
 - [x] ability to filter churches by type (Protestant, Catholic, etc.)
-  - [x] create filter UI component with checkboxes or dropdown
+  - [x] create filter UI component with checkboxes
   - [x] implement filters in search function
-  - [x] fix bug: in db google for ex. hotel is somentimes like buddisht temple (in paris for ex.)
+  - [x] fix bug: in db google for ex. hotel is somentimes like buddhist temple (in paris for ex.)
 
 - [x] additional information on marker click, such as reviews or photos
   - [x] reviews
