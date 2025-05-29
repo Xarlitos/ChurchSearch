@@ -21,6 +21,8 @@
 
 - [x] add custom search radius selector in the top footer
 
+- [ ] right panel with lists o search results
+
 ### Bugs to Fix
 - [x] need to click clear button twice, it doesn't work on the first click
 - [x] indentation issue with the top footer containing buttons
