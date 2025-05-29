@@ -32,7 +32,7 @@ interface ButtonsProps {
   setRadius: (radius: number) => void;
 }
 
-const filterOptions = ["All", "church", "mosque", "synagogue", "hindu_temple", "buddhist_temple" ];
+const filterOptions = ["All", "church", "mosque", "synagogue", "hindu_temple", "buddhist_temple", "shinto_shrine", "orthodox_church" ];
 
 const radiusOptions = [
   { label: "1 km", value: 1000 },
