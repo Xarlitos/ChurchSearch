@@ -1,6 +1,6 @@
 #!/bin/bash
 CERT_DIR="./docker/ssl"
-DOMAIN="church.local"
+DOMAIN="church.pl"
 SERVER_KEY="$CERT_DIR/server.key"
 SERVER_CSR="$CERT_DIR/server.csr"
 SERVER_CRT="$CERT_DIR/server.crt"

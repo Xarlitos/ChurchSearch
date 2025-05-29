@@ -2,25 +2,24 @@
 
 ### New Features
 
-- [ ] marker clustering: reduce the number of markers when zooming out and display their count
-  - [ ] research and choose a suitable clustering library (e.g. MarkerClusterer for Google Maps)
-  - [ ] implement clustering logic on the map
-  - [ ] display cluster count badges on grouped markers
-  - [ ] test clustering behavior on different zoom levels
+- [x] marker clustering: reduce the number of markers when zooming out and display their count
+  - [x] implement clustering logic on the map
+  - [x] display cluster count badges on grouped markers
 
-- [ ] ability to filter churches by type (Protestant, Catholic, etc.)
-  - [ ] create filter UI component with checkboxes or dropdown
-  - [ ] filter markers based on selected types using local data stored in app state or local JSON
-  - [ ] persist filter settings locally using `localStorage` to remember user preferences
-  - [ ] test filtering with multiple selections
+- [x] ability to filter churches by type (Protestant, Catholic, etc.)
+  - [x] create filter UI component with checkboxes
+  - [x] implement filters in search function
+  - [x] fix bug: in db google for ex. hotel is somentimes like buddhist temple (in paris for ex.)
 
-- [ ] additional information on marker click, such as reviews or photos
-  - [ ] design popup/modal layout for displaying extra info
-  - [ ] store reviews and photos locally (e.g. in JSON files or in `localStorage`)
-  - [ ] implement photo gallery or carousel inside marker popup using local data
-  - [ ] optionally add UI for users to add reviews/photos locally (saved in `localStorage`)
-  - [ ] ensure responsive design for mobile and desktop views
+- [x] additional information on marker click, such as reviews or photos
+  - [x] reviews
+  - [x] photo
+  - [x] type of temple
+  - [x] website + phone
 
+- [x] add autocomplete searching location
+
+- [x] add custom search radius selector in the top footer
 
 ### Bugs to Fix
 - [x] need to click clear button twice, it doesn't work on the first click

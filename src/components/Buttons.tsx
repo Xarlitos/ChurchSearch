@@ -1,100 +1,123 @@
-import { useState } from "react";
+import React, { useState, useRef } from "react";
 import Box from "@mui/material/Box";
 import Fab from "@mui/material/Fab";
-import NavigationIcon from "@mui/icons-material/Navigation";
+import Typography from "@mui/material/Typography";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Checkbox from "@mui/material/Checkbox";
+import ListItemText from "@mui/material/ListItemText";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch";
+import FilterListIcon from '@mui/icons-material/FilterList';
 import LocationSearchingIcon from "@mui/icons-material/LocationSearching";
+import NavigationIcon from "@mui/icons-material/Navigation";
 import ClearIcon from "@mui/icons-material/Clear";
 import InfoIcon from "@mui/icons-material/Info";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
-import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
-import { styled } from '@mui/material/styles';
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { Autocomplete } from "@react-google-maps/api";
 
 interface ButtonsProps {
-  onGeocode: (location: string) => Promise<void>;
+  onGeocode: (location: string) => void;
   onClear: () => void;
   onAboutClick: () => void;
   onNavigate: (location: string) => void;
   onMyLocation: () => void;
-  darkMode: boolean; // Add darkMode prop
-  setDarkMode: React.Dispatch<React.SetStateAction<boolean>>;
+  darkMode: boolean;
+  setDarkMode: (value: boolean) => void;
+  mapRef: React.RefObject<google.maps.Map | null>;
+  onFilterChange: (filters: string[]) => void;
+  radius: number;
+  setRadius: (radius: number) => void;
 }
 
-// Material UI Switch
-const MaterialUISwitch = styled(Switch)(({ theme }) => ({
-  width: 62,
-  height: 34,
-  padding: 7,
-  '& .MuiSwitch-switchBase': {
-    margin: 1,
-    padding: 0,
-    transform: 'translateX(6px)',
-    '&.Mui-checked': {
-      color: '#fff',
-      transform: 'translateX(22px)',
-      '& .MuiSwitch-thumb:before': {
-        backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
-          '#fff',
-        )}" d="M4.2 2.5l-.7 1.8-1.8.7 1.8.7.7 1.8.6-1.8L6.7 5l-1.9-.7-.6-1.8zm15 8.3a6.7 6.7 0 11-6.6-6.6 5.8 5.8 0 006.6 6.6z"/></svg>')`,
-      },
-      '& + .MuiSwitch-track': {
-        opacity: 1,
-        backgroundColor: '#aab4be',
-        ...theme.applyStyles('dark', {
-          backgroundColor: '#8796A5',
-        }),
-      },
-    },
-  },
-  '& .MuiSwitch-thumb': {
-    backgroundColor: '#001e3c',
-    width: 32,
-    height: 32,
-    '&::before': {
-      content: "''",
-      position: 'absolute',
-      width: '100%',
-      height: '100%',
-      left: 0,
-      top: 0,
-      backgroundRepeat: 'no-repeat',
-      backgroundPosition: 'center',
-      backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
-        '#fff',
-      )}" d="M9.305 1.667V3.75h1.389V1.667h-1.39zm-4.707 1.95l-.982.982L5.09 6.072l.982-.982-1.473-1.473zm10.802 0L13.927 5.09l.982.982 1.473-1.473-.982-.982zM10 5.139a4.872 4.872 0 00-4.862 4.86A4.872 4.872 0 0010 14.862 4.872 4.872 0 0014.86 10 4.872 4.872 0 0010 5.139zm0 1.389A3.462 3.462 0 0113.471 10a3.462 3.462 0 01-3.473 3.472A3.462 3.462 0 016.527 10 3.462 3.462 0 0110 6.528zM1.665 9.305v1.39h2.083v-1.39H1.666zm14.583 0v1.39h2.084v-1.39h-2.084zM5.09 13.928L3.616 15.4l.982.982 1.473-1.473-.982-.982zm9.82 0l-.982.982 1.473 1.473.982-.982-1.473-1.473zM9.305 16.25v2.083h1.389V16.25h-1.39z"/></svg>')`,
-    },
-    ...theme.applyStyles('dark', {
-      backgroundColor: '#003892',
-    }),
-  },
-  '& .MuiSwitch-track': {
-    opacity: 1,
-    backgroundColor: '#aab4be',
-    borderRadius: 20 / 2,
-    ...theme.applyStyles('dark', {
-      backgroundColor: '#8796A5',
-    }),
-  },
-}));
+const filterOptions = ["All", "church", "mosque", "synagogue", "hindu_temple", "buddhist_temple", "shinto_shrine", "orthodox_church" ];
 
-const Buttons = ({
+const radiusOptions = [
+  { label: "1 km", value: 1000 },
+  { label: "5 km", value: 5000 },
+  { label: "10 km", value: 10000 },
+  { label: "15 km", value: 15000 },
+];
+
+const Buttons: React.FC<ButtonsProps> = ({
   onGeocode,
   onClear,
   onAboutClick,
   onNavigate,
   onMyLocation,
-  darkMode, // Use darkMode from props
-  setDarkMode, // Use setDarkMode from props
-}: ButtonsProps) => {
-  const [location, setLocation] = useState<string>("");
+  darkMode,
+  setDarkMode,
+  onFilterChange,
+  radius,
+  setRadius,
+}) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [checkedOptions, setCheckedOptions] = useState<string[]>([]);
+  const [location, setLocation] = useState("");
+  const [radiusAnchorEl, setRadiusAnchorEl] = useState<null | HTMLElement>(null);
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      onGeocode(location);
+  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+
+  const onLoad = (autocomplete: google.maps.places.Autocomplete) => {
+    autocompleteRef.current = autocomplete;
+  };
+
+  const onPlaceChanged = () => {
+    if (autocompleteRef.current !== null) {
+      const place = autocompleteRef.current.getPlace();
+      if (!place) return;
+
+      const addr = place.formatted_address || place.name;
+      if (addr) {
+        setLocation(addr);
+        onGeocode(addr);
+      } else {
+        console.warn("Place has no formatted_address or name");
+      }
     }
+  };
+
+  const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleFilterClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleToggleOption = (option: string) => {
+    setCheckedOptions(prev => {
+      let newChecked: string[] = [];
+
+      if (prev.includes(option)) {
+        newChecked = prev.filter(o => o !== option);
+      } else {
+        if (option === "All") {
+          newChecked = ["All"];
+        } else {
+          newChecked = prev.filter(o => o !== "All");
+          newChecked = [...newChecked, option];
+        }
+      }
+
+      onFilterChange(newChecked);
+      return newChecked;
+    });
+  };
+
+  const handleRadiusClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setRadiusAnchorEl(event.currentTarget);
+  };
+
+  const handleRadiusClose = () => {
+    setRadiusAnchorEl(null);
+  };
+
+  const handleRadiusSelect = (value: number) => {
+    setRadius(value);
+    handleRadiusClose();
   };
 
   return (
@@ -106,112 +129,99 @@ const Buttons = ({
       width="100%"
       sx={{ padding: "0 10px", flexWrap: "wrap" }}
     >
-      {/* Pola tekstowe i przyciski */}
-      <TextField
-        variant="outlined"
-        label={darkMode ? "Search" : "Search"}  // Zmieniamy tekst w zależności od trybu
-        value={location}
-        onChange={(e) => setLocation(e.target.value)}
-        onKeyDown={handleKeyPress}
-        sx={{
-          flex: 1,
-          maxWidth: "400px",
-          marginBottom: "10px",
-          "& .MuiOutlinedInput-root": {
-          borderColor: darkMode ? "#fff" : "#000", // Kolor obramowania
-          color: darkMode ? "#fff" : "#000", // Kolor tekstu
-          },
-          "& .MuiOutlinedInput-root.Mui-focused": {
-            borderColor: darkMode ? "#fff" : "#3f51b5", // Kolor obramowania w trybie aktywnym
-          },
-          "& .MuiInputLabel-root": {
-            color: darkMode ? "#fff" : "#000", // Kolor etykiety
-          },
-          "& .MuiInputLabel-root.Mui-focused": {
-            color: darkMode ? "#fff" : "#3f51b5", // Kolor etykiety po kliknięciu
-          },
-          // Dodatkowo, aby zmienić tło w trybie ciemnym
-          "& .MuiOutlinedInput-notchedOutline": {
-            borderColor: darkMode ? "#fff" : "#000", // Ustawiamy kolor obramowania dla całego kontenera
-          },
-        }}
-      />
+      <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
+        <input
+          type="text"
+          placeholder="Search location"
+          value={location}
+          onChange={e => setLocation(e.target.value)}
+          style={{
+            width: "300px",
+            height: "40px",
+            padding: "0 12px",
+            borderRadius: "4px",
+            border: `1px solid ${darkMode ? "#fff" : "#ccc"}`,
+            color: darkMode ? "#fff" : "#000",
+            backgroundColor: darkMode ? "#222" : "#fff",
+          }}
+        />
+      </Autocomplete>
 
-      <Fab
-        variant="extended"
-        size="medium"
-        color="primary"
-        onClick={() => onGeocode(location)}
-        sx={{ marginBottom: "10px" }}
-      >
+      <Fab variant="extended" size="medium" color="primary" onClick={() => onGeocode(location)} sx={{ mb: "10px" }}>
         <LocationSearchingIcon sx={{ mr: 1 }} />
-        <Typography variant="caption" sx={{ whiteSpace: "nowrap" }}>
-          Search
-        </Typography>
+        <Typography variant="caption" sx={{ whiteSpace: "nowrap" }}>Search</Typography>
       </Fab>
 
-      <Fab
-        variant="extended"
-        size="medium"
-        color="primary"
-        onClick={ () => onNavigate(location)}
-        sx={{ marginBottom: "10px" }}
-      >
+      <Fab variant="extended" size="medium" color="primary" onClick={() => onNavigate(location)} sx={{ mb: "10px" }}>
         <NavigationIcon sx={{ mr: 1 }} />
-        <Typography variant="caption" sx={{ whiteSpace: "nowrap" }}>
-          Navigate
-        </Typography>
+        <Typography variant="caption" sx={{ whiteSpace: "nowrap" }}>Navigate</Typography>
       </Fab>
 
-      <Fab
-        variant="extended"
-        size="medium"
-        color="primary"
-        onClick={onClear}
-        sx={{ marginBottom: "10px" }}
-      >
+      <Fab variant="extended" size="medium" color="primary" onClick={onClear} sx={{ mb: "10px" }}>
         <ClearIcon sx={{ mr: 1 }} />
-        <Typography variant="caption" sx={{ whiteSpace: "nowrap" }}>
-          Clear
-        </Typography>
+        <Typography variant="caption">Clear</Typography>
       </Fab>
 
-      <Fab
-        variant="extended"
-        size="medium"
-        color="primary"
-        onClick={onAboutClick}
-        sx={{ marginBottom: "10px" }}
-      >
+      <Fab variant="extended" size="medium" color="primary" onClick={onAboutClick} sx={{ mb: "10px" }}>
         <InfoIcon sx={{ mr: 1 }} />
-        <Typography variant="caption" sx={{ whiteSpace: "nowrap" }}>
-          About
-        </Typography>
+        <Typography variant="caption">About</Typography>
       </Fab>
 
+      <Fab variant="extended" size="medium" color="primary" onClick={onMyLocation} sx={{ mb: "10px" }}>
+        <MyLocationIcon sx={{ mr: 1 }} />
+        <Typography variant="caption">My Location</Typography>
+      </Fab>
+
+      <Fab variant="extended" size="medium" color="primary" onClick={handleFilterClick} sx={{ mb: "10px" }}>
+        <FilterListIcon sx={{ mr: 1 }} />
+        <Typography variant="caption">Filters</Typography>
+      </Fab>
+
+      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleFilterClose}>
+        {filterOptions.map(option => (
+          <MenuItem key={option} onClick={() => handleToggleOption(option)}>
+            <Checkbox checked={checkedOptions.includes(option)} />
+            <ListItemText primary={option} />
+          </MenuItem>
+        ))}
+      </Menu>
+
+      {/* Dropdown wyboru promienia */}
       <Fab
         variant="extended"
         size="medium"
         color="primary"
-        onClick={onMyLocation}
-        sx={{ marginBottom: "10px" }}
+        onClick={handleRadiusClick}
+        sx={{ mb: "10px" }}
       >
-        <MyLocationIcon sx={{ mr: 1 }} />
-        <Typography variant="caption" sx={{ whiteSpace: "nowrap" }}>
-          My Location
+        <Typography variant="caption" sx={{ mr: 1, whiteSpace: "nowrap" }}>
+          Radius: {radius / 1000} km
         </Typography>
+        <KeyboardArrowDownIcon />
       </Fab>
 
-      {/* Przełącznik dla trybu ciemnego */}
+      <Menu
+        anchorEl={radiusAnchorEl}
+        open={Boolean(radiusAnchorEl)}
+        onClose={handleRadiusClose}
+      >
+        {radiusOptions.map(({ label, value }) => (
+          <MenuItem
+            key={value}
+            selected={radius === value}
+            onClick={() => handleRadiusSelect(value)}
+          >
+            {label}
+          </MenuItem>
+        ))}
+      </Menu>
+
       <FormGroup>
         <FormControlLabel
           control={
-            <MaterialUISwitch
-              sx={{ m: 1 }}
-              checked={darkMode}
-              onChange={() => setDarkMode(!darkMode)}
-            />
+            <Switch sx={{ m: 1 }} checked={darkMode} onChange={() => setDarkMode(!darkMode)} />
           }
+          label=""
         />
       </FormGroup>
     </Box>

@@ -1,6 +1,7 @@
-# Church Locator
+# Church Search
 
-Aplikacja umożliwia wyszukiwanie kościołów w określonym mieście za pomocą Google Places API. Użytkownik podaje nazwę miasta, a aplikacja korzysta z API Google, aby zwrócić listę dostępnych kościołów w tej lokalizacji. Wyniki wyszukiwania zawierają szczegóły takie jak nazwa kościoła, adres, oraz dane kontaktowe, jeśli są dostępne. Aplikacja ma na celu ułatwienie znalezienia kościołów w danym obszarze, wspierając użytkowników w planowaniu odwiedzin i wydarzeń religijnych.
+The app lets users search for churches in a given location via Google Places API, showing names, addresses, and contact info to help plan visits and events.
+
 
 # Run project
 ## ENV
@@ -33,15 +34,19 @@ sudo chmod +x ./install_req_app.sh
 
 2. docker run app with docker compose
 ```
-# build container and run
-./run_app.sh -run
-
-# kill container and build from new
-./run_app.sh -restart
-
-# kill docker container and clean storage
-./run_app.sh -kill
+./docker/run_app.sh -s
+# or use other options
 ```
+### Explanation of options:
+
+- `-r` — restart the app cleanly by stopping all containers, pruning unused Docker resources, and then starting the app.  
+- `-k` — stop and remove all containers without starting the app.  
+- `-s` — start the app without stopping any containers.  
+- `-c` — stop all containers, clean the `node_modules` directory, and start the app.
+
+
+**Note:**  
+Make sure to run the script from the main project directory where the `docker-compose.yml` file is located.
 
 ### on MacOS
 1. Install colima vm.
@@ -49,8 +54,8 @@ sudo chmod +x ./install_req_app.sh
 #run colima vm with 4 threads and 8 gb ram
 colima start --cpu 4 --memory 8
 
-#run docker
-./run_app.sh -run
+#run docker, like on linux use script
+./docker/run_app.sh -s
 
 #and others command from above
 
@@ -60,7 +65,7 @@ colima stop
 
 
 ### hosts
-add to **C:\Windows\System32\drivers\etc\hosts** line 
+add to `C:\Windows\System32\drivers\etc\hosts` line 
 ```
 127.0.0.1    church.pl
 ```
