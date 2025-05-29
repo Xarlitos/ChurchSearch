@@ -2,9 +2,9 @@
 
 ### New Features
 
-- [ ] marker clustering: reduce the number of markers when zooming out and display their count
-  - [ ] implement clustering logic on the map
-  - [ ] display cluster count badges on grouped markers
+- [x] marker clustering: reduce the number of markers when zooming out and display their count
+  - [x] implement clustering logic on the map
+  - [x] display cluster count badges on grouped markers
 
 - [x] ability to filter churches by type (Protestant, Catholic, etc.)
   - [x] create filter UI component with checkboxes or dropdown
